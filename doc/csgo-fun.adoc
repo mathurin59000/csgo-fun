@@ -1,0 +1,70 @@
+= *CSGO Fun*
+
+== *1/ Introduction*
+
+=== *+++<u>1.1/ Introduction</u>+++*
+
+This document introduces many things about the CSGO Fun project which allows to : 
+
+[[nested]]
+* Looks csgo stats
+* Spin a rool so as to win coins
+* Deposit an item on the server
+* Create trade offers with other members
+* Marketplace
+* Contact teams for matchmaking
+* PlugDj room
+* Community actuality
+* ...
+
+== *2/ Technologies*
+
+Backend : 
+
+[[nested]]
+* NodeJs
+* Frameword Express
+* MongoDb
+
+Frontend : 
+
+[[nested]]
+* HTML5
+* CSS
+* Bootstrap
+* Jquery
+* AngularJs
+* AdminLTE Theme
+
+== *3/ Installation*
+
+Open a git Bash where you want, and tape : 
+
+$ git clone https://github.com/mathurin59000/csgo-fun.git
+
+A repositery is going to create on yopur computer with the project inside so move to the /csgo-fun folder.
+Open a Git Bah here and tape : 
+
+$ npm install
+
+All dependencies are going to create in node-modules folder at the root ofthe project.
+
+Now, run the server :
+
+$ node server
+
+The server will respond you : "Server listening on port 8080". Thats's it, go to http://localhost:8080 !
+
+== *4/ Git commands*
+
+$ git pull +
+$ git add --all +
+$ git commit -m "ur_commentary" + 
+$ git push
+
+== *5/ Production environment*
+
+$ heroku login //Credentials +
+$ git push heroku master +
+$ heroku ps:scale web=1 //Make sure that the app is running +
+$ heroku open //Launch the app in your browser 
