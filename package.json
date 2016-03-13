@@ -1,5 +1,5 @@
 {
-  "name": "csgo fun",
+  "name": "node-api",
   "main": "server.js",
   "repository": {
     "type": "git",
