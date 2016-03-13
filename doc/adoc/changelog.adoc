@@ -1,0 +1,16 @@
+= *Changelog*
+
+== *12/03/2016*
+[[nested]]
+* I followed this tutorial to create a basic RESTFull MVC app with the Express Framework :
+* I found AdminLte Theme which is free !
+* Implementing passport-steam due to authentificate with steam
+
+== *13/03/2016*
+It was time to write some documentations like installation tutorials
+[[nested]]
+* Push code on Github : https://github.com/mathurin59000/csgo-fun.git
+* Deploy app on Heroku : http://csgo-fun.heroku-app.com
+* Favicon.ico added
+* Steam Authentification
+* Database connection

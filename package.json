@@ -11,10 +11,12 @@
   "author": "Chris Sevilleja <scotch.io>",
   "license": "MIT",
   "dependencies": {
-    "express": "~4.0.0",
-    "morgan": "~1.0.0",
-    "mongoose": "~3.6.13",
     "body-parser": "~1.0.1",
+    "express": "~4.0.0",
+    "mongodb": "^2.1.7",
+    "mongoose": "~3.6.13",
+    "morgan": "~1.0.0",
+    "node-localstorage": "^1.1.2",
     "passport": ">= 0.0.0",
     "passport-steam": "^0.1.6"
   }

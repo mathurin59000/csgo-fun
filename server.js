@@ -9,6 +9,9 @@ var morgan     = require('morgan');
 var path = require('path');
 var passport = require('passport');
 var SteamStrategy = require('passport-steam').Strategy;
+var LocalStorage = require('node-localstorage').LocalStorage;
+var localStorage = new LocalStorage('./scratch');
+var db = require('./db')
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -30,14 +33,16 @@ passport.deserializeUser(function(obj, done) {
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new SteamStrategy({
-    returnURL: 'http://localhost:8080/',
+    returnURL: 'http://localhost:8080/auth/steam/return',
     realm: 'http://localhost:8080/',
-    apiKey: 'Your API key here'
+    apiKey: '336F47CADE44154B12B320F6F6B4AA02'
   },
   function(identifier, profile, done) {
+  	console.log("retour de steam");
+  	console.log(profile);
+  	localStorage.setItem('steam', JSON.stringify(profile._json));
     // asynchronous verification, for effect...
     process.nextTick(function () {
-
       // To keep the example simple, the user's Steam profile is returned to
       // represent the logged-in user.  In a typical application, you would want
       // to associate the Steam account with a user record in your database,
@@ -49,6 +54,7 @@ passport.use(new SteamStrategy({
 ));
 
 // configure app
+app.set('views', __dirname + '/views');
 app.use(morgan('dev')); // log requests to the console
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
@@ -62,7 +68,7 @@ app.use(bodyParser.json());
 var port     = process.env.PORT || 8080; // set our port
 
 /*var mongoose   = require('mongoose');
-mongoose.connect('mongodb://node:node@novus.modulusmongo.net:27017/Iganiq8o'); // connect to our database*/
+mongoose.connect('mongodb://localhost:27017/mydatabase'); // connect to our database*/
 var Bear     = require('./app/models/bear');
 
 // ROUTES FOR OUR API
@@ -97,6 +103,11 @@ router.get('/', function(req, res) {
 	res.json({ message: 'hooray! welcome to our api!' });	
 });
 
+router.get('/steamid', function(req, res){
+	console.log(localStorage.getItem('steam'));
+	res.json(localStorage.getItem('steam'));
+})
+
 // on routes that end in /bears
 // ----------------------------------------------------
 router.route('/bears')
@@ -105,7 +116,10 @@ router.route('/bears')
 	.post(function(req, res) {
 		
 		var bear = new Bear();		// create a new instance of the Bear model
-		bear.name = req.body.name;  // set the bears name (comes from the request)
+		bear.name = req.query.name;
+		console.log(req.params);
+		console.log(req.query);
+		console.log(bear.name);  // set the bears name (comes from the request)
 
 		bear.save(function(err) {
 			if (err)
@@ -183,13 +197,38 @@ app.use('/api', router);
 app.get('/auth/steam',
   passport.authenticate('steam', { failureRedirect: '/' }),
   function(req, res) {
-    res.redirect('/test');
+    res.redirect('/');
   });
+
+app.get('/auth/steam/return',
+  passport.authenticate('steam', { failureRedirect: '/' }),
+  function(req, res) {
+    res.redirect('/');
+  });
+
+app.get('/test', ensureAuthenticated, function(req, res){
+  res.render('test', { user: req.user });
+});
 
 app.use(express.static(__dirname + '/public'));
 app.use('/static', express.static(__dirname + '/public'));
 
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/');
+}
+
 // START THE SERVER
 // =============================================================================
-app.listen(port);
-console.log('Server listening on port ' + port);
+// Connect to Mongo on start
+db.connect('mongodb://localhost:27017/csgofun', function(err) {
+  if (err) {
+    console.log('Unable to connect to Mongo.');
+    process.exit(1);
+  } else {
+    app.listen(port, function() {
+      console.log('Server listening on port ' + port);
+    })
+  }
+});
+
