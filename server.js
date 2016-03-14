@@ -56,6 +56,7 @@ passport.use(new SteamStrategy({
 // configure app
 app.set('views', __dirname + '/views');
 app.use(morgan('dev')); // log requests to the console
+
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
 app.use(passport.initialize());
@@ -92,6 +93,7 @@ routerView.use(function(req, res, next) {
 	next();
 });
 routerView.get('/', function(req, res){
+	console.log(req.user);
 	res.sendfile(path.join(__dirname+'/views/layout.html'));
 });
 routerView.get('/test', function(req, res){
@@ -104,8 +106,8 @@ router.get('/', function(req, res) {
 });
 
 router.get('/steamid', function(req, res){
-	console.log(localStorage.getItem('steam'));
-	res.json(localStorage.getItem('steam'));
+	console.log(req);
+	//res.json(localStorage.getItem('steam'));
 })
 
 // on routes that end in /bears

@@ -2,8 +2,8 @@
 
 == *12/03/2016*
 [[nested]]
-* I followed this tutorial to create a basic RESTFull MVC app with the Express Framework :
-* I found AdminLte Theme which is free !
+* I followed this tutorial to create a basic RESTFull MVC app with the Express Framework : https://scotch.io/tutorials/build-a-restful-api-using-node-and-express-4
+* I found AdminLte Theme which is free : https://almsaeedstudio.com/preview
 * Implementing passport-steam due to authentificate with steam
 
 == *13/03/2016*
