@@ -12,5 +12,10 @@ It was time to write some documentations like installation tutorials
 * Push code on Github : https://github.com/mathurin59000/csgo-fun.git
 * Deploy app on Heroku : http://csgo-fun.heroku-app.com
 * Favicon.ico added
-* Steam Authentification
+* Steam Authentification (not done)
 * Database connection
+
+== *14/03/2016*
+It was time to write some documentations like installation tutorials
+[[nested]]
+* AngularJs added

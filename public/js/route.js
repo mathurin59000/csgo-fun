@@ -4,8 +4,8 @@ App.config(['$routeProvider',
       when('/', {
     	 templateUrl: 'templates/home.html' 
       }).
-      when('/stats', {
-        templateUrl: 'templates/stats.html',
+      when('/stat', {
+        templateUrl: 'templates/stat.html',
         controller: 'StatController'
       }).
       when('/room', {

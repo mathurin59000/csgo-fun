@@ -136,7 +136,7 @@
                 </ul>
               </li>
               <!-- Notifications: style can be found in dropdown.less -->
-              <li class="dropdown notifications-menu">
+              <li class="dropdown notifications-menu" ng-show="Auth.isAuthenticated()">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-bell-o"></i>
                   <span class="label label-warning">10</span>
@@ -194,13 +194,10 @@
                   <!-- Menu Footer-->
                   <li class="user-footer">
                     <div class="pull-left">
-                      <a href="#" class="btn btn-default btn-flat">Profile</a>
-                    </div>
-                    <div>
                       <a href="auth/steam" class="btn btn-default btn-flat">Sign On with Steam</a>
                     </div>
                     <div class="pull-right">
-                      <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                      <a href="#" class="btn btn-default btn-flat" ng-click="logout()">Sign out</a>
                     </div>
                   </li>
                 </ul>
@@ -272,7 +269,7 @@
 
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
+                <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
             Dashboard
@@ -708,7 +705,8 @@
           </div><!-- /.row (main row) -->
 
         </section><!-- /.content -->
-      </div><!-- /.content-wrapper -->
+      </div>
+
       <footer class="main-footer">
         <div class="pull-right hidden-xs">
           <b>Version</b> 2.3.0
@@ -921,15 +919,17 @@
     <!-- AdminLTE for demo purposes -->
     <script src="dist/js/demo.js"></script>
     <!-- Agular Js -->
-    <script src="bootstrap/js/angular.min.js"></script>
-    <script src="js/dependencies/angular-route.min.js"></script>
+    <script src="js/dependencies/angular.js"></script>
+    <script src="js/dependencies/angular-route.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/route.js"></script>
+    <!--<script src="js/route.js"></script>-->
     <script src="js/controllers/appController.js"></script>
     <script src="js/controllers/statController.js"></script>
     <script src="js/controllers/roomController.js"></script>
     <script src="js/controllers/depositController.js"></script>
     <script src="js/controllers/tradeController.js"></script>
     <script src="js/controllers/teamController.js"></script>
+    <script src="js/services/auth.js"></script>
+    <script src="js/services/localStorage.js"></script>
   </body>
 </html>

@@ -4,13 +4,12 @@
 // call the packages we need
 var express    = require('express');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var app        = express();
 var morgan     = require('morgan');
 var path = require('path');
 var passport = require('passport');
 var SteamStrategy = require('passport-steam').Strategy;
-var LocalStorage = require('node-localstorage').LocalStorage;
-var localStorage = new LocalStorage('./scratch');
 var db = require('./db')
 
 // Passport session setup.
@@ -39,8 +38,7 @@ passport.use(new SteamStrategy({
   },
   function(identifier, profile, done) {
   	console.log("retour de steam");
-  	console.log(profile);
-  	localStorage.setItem('steam', JSON.stringify(profile._json));
+  	//console.log(profile);
     // asynchronous verification, for effect...
     process.nextTick(function () {
       // To keep the example simple, the user's Steam profile is returned to
@@ -65,6 +63,12 @@ app.use(passport.session());
 // configure body parser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(require('express-session')({
+    secret: 'cat',
+    resave: false,
+    saveUninitialized: false
+}));
 
 var port     = process.env.PORT || 8080; // set our port
 
@@ -92,12 +96,30 @@ routerView.use(function(req, res, next) {
 	console.log('Something is happening in routerView.');
 	next();
 });
+
+router.post('/logout', function(req, res){
+  req.logout();
+  res.redirect('/login');
+});
+
 routerView.get('/', function(req, res){
-	console.log(req.user);
 	res.sendfile(path.join(__dirname+'/views/layout.html'));
 });
+
 routerView.get('/test', function(req, res){
 	res.sendfile(path.join(__dirname+'/views/test.html'));
+});
+
+app.get('/login', function(req, res){
+	res.sendfile(path.join(__dirname+'/views/login.html'));
+});
+
+app.get('/404', function(req, res){
+	res.sendfile(path.join(__dirname+'/views/404.html'));
+});
+
+app.get('/500', function(req, res){
+	res.sendfile(path.join(__dirname+'/views/500.html'));
 });
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
@@ -106,9 +128,8 @@ router.get('/', function(req, res) {
 });
 
 router.get('/steamid', function(req, res){
-	console.log(req);
-	//res.json(localStorage.getItem('steam'));
-})
+	res.json(req.session);
+});
 
 // on routes that end in /bears
 // ----------------------------------------------------
@@ -197,13 +218,13 @@ app.use('/api', router);
 //   the user to steam.com.  After authenticating, Steam will redirect the
 //   user back to this application at /auth/steam/return
 app.get('/auth/steam',
-  passport.authenticate('steam', { failureRedirect: '/' }),
+  passport.authenticate('steam', { failureRedirect: '/404' }),
   function(req, res) {
     res.redirect('/');
   });
 
 app.get('/auth/steam/return',
-  passport.authenticate('steam', { failureRedirect: '/' }),
+  passport.authenticate('steam', { failureRedirect: '/404' }),
   function(req, res) {
     res.redirect('/');
   });
