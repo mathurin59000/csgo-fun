@@ -14,6 +14,10 @@ var db = require('./db');
 var http = require('http');
 var steamApiKey = '336F47CADE44154B12B320F6F6B4AA02';
 
+//Environment variables
+var env = 'https://csgo-fun.herokuapp.com';
+//var env = 'https://localhost:8080';
+
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,
@@ -34,8 +38,8 @@ passport.deserializeUser(function(obj, done) {
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new SteamStrategy({
-    returnURL: 'http://localhost:8080/auth/steam/return',
-    realm: 'http://localhost:8080/',
+    returnURL: env+'/auth/steam/return',
+    realm: env,
     apiKey: '336F47CADE44154B12B320F6F6B4AA02'
   },
   function(identifier, profile, done) {
@@ -156,7 +160,6 @@ router.get('/community', function(req, res){
         response.on('end', function() {
             // Data reception is done, do whatever with it!
             var parsed = JSON.parse(body);
-            console.log(parsed);
             res.json(parsed);
         });
     });
