@@ -1,32 +1,53 @@
-var App = angular.module("App", ['ngRoute']);
+var App = angular.module("App", ['ui.router']);
 
-App.config(['$routeProvider',
-  function($routeProvider) {
-    $routeProvider.
-      when('/', {
-    	 templateUrl: 'templates/home.html' 
-      }).
-      when('/stat', {
-        templateUrl: 'templates/stat.html',
-        controller: 'StatController'
-      }).
-      when('/room', {
-        templateUrl: 'templates/room.html',
-        controller: 'RoomController'
-      }).
-      when('/deposit', {
-	      templateUrl: 'templates/deposit.html',
-        controller: 'DepositController'
-	    }).
-      when('/trade', {
-        templateUrl: 'templates/trade.html',
-        controller: 'TradeController'
-      }).
-      when('/team', {
-        templateUrl: 'templates/team.html',
-        controller: 'TeamController'
-      }).
-      otherwise({
-        redirectTo: '/'
-      });
-  }]);
+App.config(function($stateProvider, $urlRouterProvider) {
+    
+    $urlRouterProvider.otherwise('/home');
+    
+    $stateProvider
+        
+        // HOME STATES AND NESTED VIEWS ========================================
+        .state('home', {
+            url: '/',
+            templateUrl: 'js/templates/home.html',
+            controller: 'HomeController'
+        })
+
+        .state('home2', {
+            url: '/home',
+            templateUrl: 'js/templates/home.html',
+            controller: 'HomeController'
+        })
+        
+        // ABOUT PAGE AND MULTIPLE NAMED VIEWS =================================
+        .state('stat', {
+            url: '/stat',
+            templateUrl: 'js/templates/stat.html',
+            controller: 'StatController'      
+        })
+
+        .state('room', {
+            url: '/room',
+            templateUrl: 'js/templates/room.html',
+            controller: 'RoomController'      
+        })
+
+        .state('spin', {
+            url: '/spin',
+            templateUrl: 'js/templates/spin.html',
+            controller: 'DepositController'      
+        })
+
+        .state('trade', {
+            url: '/trade',
+            templateUrl: 'js/templates/trade.html',
+            controller: 'TradeController'      
+        })
+
+        .state('team', {
+            url: '/team',
+            templateUrl: 'js/templates/team.html',
+            controller: 'TeamController'      
+        });
+        
+});

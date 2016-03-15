@@ -10,7 +10,9 @@ var morgan     = require('morgan');
 var path = require('path');
 var passport = require('passport');
 var SteamStrategy = require('passport-steam').Strategy;
-var db = require('./db')
+var db = require('./db');
+var http = require('http');
+var steamApiKey = '336F47CADE44154B12B320F6F6B4AA02';
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -98,7 +100,7 @@ routerView.use(function(req, res, next) {
 });
 
 router.post('/logout', function(req, res){
-  req.logout();
+  req.session.destroy();
   res.redirect('/login');
 });
 
@@ -127,6 +129,40 @@ router.get('/', function(req, res) {
 	res.json({ message: 'hooray! welcome to our api!' });	
 });
 
+// Retrieve stats of a player 
+router.get('/stat', function(req, res){
+	http.get('http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key='+steamApiKey+'&steamid='+req.query.id, function(response) {
+        // Continuously update stream with data
+        var body = '';
+        response.on('data', function(d) {
+            body += d;
+        });
+        response.on('end', function() {
+            // Data reception is done, do whatever with it!
+            var parsed = JSON.parse(body);
+            res.json(parsed);
+        });
+    });
+});
+
+// Retrieve actualities of the csgo community
+router.get('/community', function(req, res){
+	http.get('http://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=730&count=20&maxlength=300&format=json', function(response) {
+        // Continuously update stream with data
+        var body = '';
+        response.on('data', function(d) {
+            body += d;
+        });
+        response.on('end', function() {
+            // Data reception is done, do whatever with it!
+            var parsed = JSON.parse(body);
+            console.log(parsed);
+            res.json(parsed);
+        });
+    });
+});
+
+// Retrieve steamid and passport
 router.get('/steamid', function(req, res){
 	res.json(req.session);
 });
@@ -244,7 +280,7 @@ function ensureAuthenticated(req, res, next) {
 // START THE SERVER
 // =============================================================================
 // Connect to Mongo on start
-db.connect('mongodb://localhost:27017/csgofun', function(err) {
+/*db.connect('mongodb://localhost:27017/csgofun', function(err) {
   if (err) {
     console.log('Unable to connect to Mongo.');
     process.exit(1);
@@ -253,5 +289,8 @@ db.connect('mongodb://localhost:27017/csgofun', function(err) {
       console.log('Server listening on port ' + port);
     })
   }
-});
+});*/
 
+app.listen(port, function() {
+      console.log('Server listening on port ' + port);
+    })
