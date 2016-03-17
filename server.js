@@ -14,10 +14,6 @@ var db = require('./db');
 var http = require('http');
 var steamApiKey = '336F47CADE44154B12B320F6F6B4AA02';
 
-//Environment variables
-var env = 'https://csgo-fun.herokuapp.com';
-//var env = 'https://localhost:8080';
-
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
 //   serialize users into and deserialize users out of the session.  Typically,
@@ -38,8 +34,8 @@ passport.deserializeUser(function(obj, done) {
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new SteamStrategy({
-    returnURL: env+'/auth/steam/return',
-    realm: env,
+    returnURL: 'http://localhost:8080/auth/steam/return',
+    realm: 'http://localhost:8080/',
     apiKey: '336F47CADE44154B12B320F6F6B4AA02'
   },
   function(identifier, profile, done) {
@@ -152,6 +148,36 @@ router.get('/stat', function(req, res){
 // Retrieve actualities of the csgo community
 router.get('/community', function(req, res){
 	http.get('http://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=730&count=20&maxlength=300&format=json', function(response) {
+        // Continuously update stream with data
+        var body = '';
+        response.on('data', function(d) {
+            body += d;
+        });
+        response.on('end', function() {
+            // Data reception is done, do whatever with it!
+            var parsed = JSON.parse(body);
+            res.json(parsed);
+        });
+    });
+});
+
+// Retrieve steam profile
+router.get('/getProfile', function(req, res){
+	http.get('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='+steamApiKey+'&steamids='+req.query.id, function(response) {
+        var body = '';
+        response.on('data', function(d) {
+            body += d;
+        });
+        response.on('end', function() {
+            var parsed = JSON.parse(body);
+            res.json(parsed);
+        });
+    });
+});
+
+// Retrieve csgo inventory
+router.get('/inventory', function(req, res){
+	http.get('http://steamcommunity.com/profiles/'+req.query.id+'/inventory/json/730/2', function(response) {
         // Continuously update stream with data
         var body = '';
         response.on('data', function(d) {

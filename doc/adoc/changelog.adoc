@@ -1,4 +1,4 @@
-= *Changelog*
+= *Changelogs*
 
 == *12/03/2016*
 [[nested]]
@@ -23,4 +23,17 @@ It was time to write some documentations like installation tutorials
 
 == *15/03/2016*
 [[nested]]
+* ui-router solved the problem
+* /stat?id -> stats about csgo
+* /community -> actualities about csgo
+* All frontend routes with controllers implemented
+* Authentication's lifecycle done
 
+== *16/03/2016*
+[[nested]]
+* Displaying content of the community
+* Displaying some stats about csgo's player
+* /inventory -> inventory's player
+* maps .png added, thanks counterstrike.wikia : http://counterstrike.wikia.com/wiki/AWP/Gallery
+* Adding weapons .png for inventory display...
+* Wallpaper on login and layout pages added

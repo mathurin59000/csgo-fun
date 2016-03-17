@@ -1,8 +1,50 @@
 <section class="content">
 	<div class="row">
-		<div class="jumbotron text-center">
-		    <h1>Csgo-Fun Home Page</h1>
-		    <p>Have fun, have skins !</p>    
+		<div class="text-center">
+		    <h1><b>Csgo-Fun Home Page</b></h1>
+		    <p><h2><em>Have fun, have skins !</em></h2></p>    
 		</div>
 	</div>
+</section>
+
+<section class="content">
+	<div class="row">
+		<div class="col-md-3"></div>
+		<div class="col-md-6">
+
+          <!-- Box Comment -->
+          <div class="box box-widget" ng-repeat="item in news">
+            <div class="box-header with-border">
+              <div class="user-block">
+                <img class="img-circle" src="../dist/img/user1-128x128.jpg" alt="user image">
+                <span class="username"><a href="#">{{item.title}}</a></span>
+                <span class="description">{{item.feedlabel}} - {{item.date}}</span>
+              </div><!-- /.user-block -->
+              <div class="box-tools">
+                <button class="btn btn-box-tool" data-toggle="tooltip" title="Mark as read"><i class="fa fa-circle-o"></i></button>
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div><!-- /.box-tools -->
+            </div><!-- /.box-header -->
+            <div class="box-body">
+              <!-- post text -->
+              <p>{{item.content}}</p>
+
+              <!-- Attachment -->
+              <div class="attachment-block clearfix">
+                <img class="attachment-img" src="../dist/img/photo1.png" alt="attachment image">
+                <div class="attachment-pushed">
+                  <h4 class="attachment-heading"><a href="{{item.url}}">{{item.title}}</a></h4>
+                  <div class="attachment-text">
+                    Description about the attachment can be placed here.
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry... <a href="#">more</a>
+                  </div><!-- /.attachment-text -->
+                </div><!-- /.attachment-pushed -->
+              </div><!-- /.attachment-block -->
+            </div><!-- /.box-body -->
+          </div><!-- /.box -->
+
+        </div>
+        <div class="col-md-3"></div>
+    </div>
 </section>

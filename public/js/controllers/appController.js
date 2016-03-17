@@ -1,17 +1,11 @@
 App.controller("AppController", function($scope, $http, Auth) {
-	  console.log("dans AppController");
-	  $scope.helloTo = {};
-	  $scope.helloTo.title = "AngularJS";
-	  $scope.user;
-
 	  
-
+	  //console.log("dans AppController");
+	  $scope.user;
 	  $http({
 		  method: 'GET',
 		  url: '/api/steamid'
 		}).then(function successCallback(response) {
-			console.log("session !!!!!");
-			console.log(response);
 			if (response.data.passport) {
 				if(response.data.passport.user){
 					Auth.login(response.data.passport.user);
@@ -20,7 +14,6 @@ App.controller("AppController", function($scope, $http, Auth) {
 				}
 			}
 			else{
-				console.log("pas de session !!!");
 				if(Auth.isAuthenticated()==null){
 					window.location.href=window.location.protocol+"//"+window.location.host+"/login";
 				}
@@ -28,10 +21,10 @@ App.controller("AppController", function($scope, $http, Auth) {
 					$scope.user = JSON.parse(Auth.isAuthenticated());
 				} 
 			}
-			
 			// this callback will be called asynchronously
 		    // when the response is available
 		  }, function errorCallback(response) {
+		  	console.log("error");
 		  	console.log(response);
 		  	window.location.href=window.location.protocol+"//"+window.location.host+"/login";
 		    // called asynchronously if an error occurs

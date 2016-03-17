@@ -1,13 +1,14 @@
 App.controller("HomeController", function($scope, $http) {
 
-	$scope.stats;
+	$scope.news;
 
     $http({
 	  method: 'GET',
 	  url: '/api/community'
 	}).then(function successCallback(response) {
 		console.log(response);
-		$scope.stats = response.data;
+		$scope.news = response.data.appnews.newsitems;
+		console.log($scope.news);
 		// this callback will be called asynchronously
 	    // when the response is available
 	}, function errorCallback(response) {
