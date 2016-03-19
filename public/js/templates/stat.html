@@ -22,22 +22,22 @@
                   <p>{{stats[0].value}} kills | {{stats[1].value}} deaths</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-bag"></i>
+                  <img src="images/png/graphic.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
             </div><!-- ./col -->
             <div class="col-lg-3 col-xs-6">
               <!-- small box -->
               <div class="small-box bg-green">
                 <div class="inner">
-                  <h3>{{(stats[25].value/stats[0].value).toPrecision(2)}}<sup style="font-size: 20px">%</sup> HS</h3> 
+                  <h3>{{(stats[25].value/stats[0].value).toPrecision(2)*100}}<sup style="font-size: 20px">%</sup> HS</h3> 
                   <p>{{stats[25].value}} heads / {{stats[0].value}} kills</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-stats-bars"></i>
+                  <img src="images/png/hs.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
             </div><!-- ./col -->
             <div class="col-lg-3 col-xs-6">
@@ -48,9 +48,9 @@
                   <p>{{stats[111].value}} / {{stats[112].value}} pistol rounds played</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-person-add"></i>
+                  <img src="images/png/pistol.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
             </div><!-- ./col -->
             <div class="col-lg-3 col-xs-6">
@@ -61,9 +61,9 @@
                   <p>{{stats[46].value}} hits / {{stats[47].value}} fired</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-pie-graph"></i>
+                  <img src="images/png/target.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
             </div><!-- ./col -->
           </div><!-- /.row -->
@@ -73,59 +73,59 @@
               <!-- small box -->
               <div class="small-box bg-aqua">
                 <div class="inner">
-                  <h3>{{(stats[0].value/stats[1].value).toPrecision(3)}}<sup style="font-size: 20px">%</sup> K/D</h3>
-                  <p>{{stats[0].value}} kills | {{stats[1].value}} deaths</p>
+                  <h3>{{mvp}} Stars</h3>
+                  <p>mvp</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-bag"></i>
+                  <img src="images/png/stars.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
             </div><!-- ./col -->
             <div class="col-lg-3 col-xs-6">
               <!-- small box -->
               <div class="small-box bg-green">
                 <div class="inner">
-                  <h3>{{(stats[25].value/stats[0].value).toPrecision(2)}}<sup style="font-size: 20px">%</sup> HS</h3> 
-                  <p>{{stats[25].value}} heads / {{stats[0].value}} kills</p>
+                  <h3>{{hostages}} Hostages</h3> 
+                  <p>rescue</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-stats-bars"></i>
+                  <img src="images/png/hostages.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
             </div><!-- ./col -->
             <div class="col-lg-3 col-xs-6">
               <!-- small box -->
               <div class="small-box bg-yellow">
                 <div class="inner">
-                  <h3>{{(stats[111].value/stats[112].value).toPrecision(2)*100}}<sup style="font-size: 20px">%</sup> P-rounds won</h3>
-                  <p>{{stats[111].value}} / {{stats[112].value}} pistol rounds played</p>
+                  <h3>{{bombs}} Bombs</h3>
+                  <p>defused</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-person-add"></i>
+                  <img src="images/png/bomb.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
             </div><!-- ./col -->
             <div class="col-lg-3 col-xs-6">
               <!-- small box -->
               <div class="small-box bg-red">
                 <div class="inner">
-                  <h3>{{(stats[46].value/stats[47].value).toPrecision(2)*100}}<sup style="font-size: 20px">%</sup> Hits/Fired</h3>
-                  <p>{{stats[46].value}} hits / {{stats[47].value}} fired</p>
+                  <h3>{{money}} $</h3>
+                  <p>earned</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-pie-graph"></i>
+                  <img src="images/png/money.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
                 </div>
-                <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
             </div><!-- ./col -->
           </div><!-- /.row -->
 
           <div class="row">
 
-            <div class="col-lg-6 col-xs-12">
+            <div class="col-lg-4 col-xs-6">
               <div class="box box-widget widget-user-2">
                 <!-- Add the bg color to the header using any of the bg-* classes -->
                 <div class="widget-user-header bg-red">
@@ -137,13 +137,13 @@
                 </div>
                 <div class="box-footer no-padding">
                   <ul class="nav nav-stacked">
-                    <li ng-repeat="map in mapsRatio | orderBy:'-value'"><a ui-sref="stat">{{map.name}} <span class="pull-right badge bg-blue">{{map.value}}</span></a></li>
+                    <li ng-repeat="map in mapsRatio | orderBy:'-value'"><a ui-sref="stat"><img src="images/maps/{{map.name}}.png" height="50px" width="70px"/>&nbsp;&nbsp;{{map.name}} <span class="pull-right badge bg-blue">{{map.value}}</span></a></li>
                   </ul>
                 </div>
               </div>
             </div>
 
-            <div class="col-lg-6 col-xs-12">
+            <div class="col-lg-4 col-xs-6">
               <div class="box box-widget widget-user-2">
                 <!-- Add the bg color to the header using any of the bg-* classes -->
                 <div class="widget-user-header bg-blue">
@@ -155,7 +155,25 @@
                 </div>
                 <div class="box-footer no-padding">
                   <ul class="nav nav-stacked">
-                    <li ng-repeat="weapon in weaponsKills | orderBy:'-value'"><a ui-sref="stat">{{weapon.name}} <span class="pull-right badge bg-blue">{{weapon.value}}</span></a></li>
+                    <li ng-repeat="weapon in weaponsKills | orderBy:'-value'"><a ui-sref="stat"><img src="images/weapons/basics/{{weapon.name}}.png" height="50px" width="70px"/>&nbsp;&nbsp;{{weapon.name}} <span class="pull-right badge bg-blue">{{weapon.value}}</span></a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-xs-6">
+              <div class="box box-widget widget-user-2">
+                <!-- Add the bg color to the header using any of the bg-* classes -->
+                <div class="widget-user-header bg-blue">
+                  <div class="widget-user-image">
+                    <img class="img-circle" src="../dist/img/weapons.jpg" alt="User Avatar">
+                  </div><!-- /.widget-user-image -->
+                  <h3 class="widget-user-username">Weapons</h3>
+                  <h5 class="widget-user-desc">{{user.displayName}}</h5>
+                </div>
+                <div class="box-footer no-padding">
+                  <ul class="nav nav-stacked">
+                    <li ng-repeat="weapon in weaponsRatio | orderBy:'-value'"><a ui-sref="stat"><img src="images/weapons/basics/{{weapon.name}}.png" height="50px" width="70px"/>&nbsp;&nbsp;{{weapon.name}} <span class="pull-right badge bg-blue">{{weapon.value}} %</span></a></li>
                   </ul>
                 </div>
               </div>

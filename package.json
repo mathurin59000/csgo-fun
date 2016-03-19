@@ -19,6 +19,7 @@
     "mongoose": "~3.6.13",
     "morgan": "~1.0.0",
     "passport": ">= 0.0.0",
-    "passport-steam": "^0.1.6"
+    "passport-steam": "^0.1.6",
+    "socket.io": "^1.4.5"
   }
 }
