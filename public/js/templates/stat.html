@@ -74,10 +74,9 @@
               <div class="small-box bg-aqua">
                 <div class="inner">
                   <h3>{{mvp}} Stars</h3>
-                  <p>mvp</p>
                 </div>
                 <div class="icon">
-                  <img src="images/png/stars.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
+                  <img src="images/png/stars.png" width="55px" height="50px" style="margin-bottom:40px;margin-right:10px"/>
                 </div>
                 <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
@@ -87,10 +86,9 @@
               <div class="small-box bg-green">
                 <div class="inner">
                   <h3>{{hostages}} Hostages</h3> 
-                  <p>rescue</p>
                 </div>
                 <div class="icon">
-                  <img src="images/png/hostages.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
+                  <img src="images/png/hostages.png" width="55px" height="50px" style="margin-bottom:40px;margin-right:10px"/>
                 </div>
                 <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
@@ -100,10 +98,9 @@
               <div class="small-box bg-yellow">
                 <div class="inner">
                   <h3>{{bombs}} Bombs</h3>
-                  <p>defused</p>
                 </div>
                 <div class="icon">
-                  <img src="images/png/bomb.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
+                  <img src="images/png/bomb.png" width="55px" height="50px" style="margin-bottom:40px;margin-right:10px"/>
                 </div>
                 <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
@@ -113,10 +110,9 @@
               <div class="small-box bg-red">
                 <div class="inner">
                   <h3>{{money}} $</h3>
-                  <p>earned</p>
                 </div>
                 <div class="icon">
-                  <img src="images/png/money.png" width="55px" height="50px" style="margin-bottom:30px;margin-right:10px"/>
+                  <img src="images/png/money.png" width="55px" height="50px" style="margin-bottom:40px;margin-right:10px"/>
                 </div>
                 <a ui-sref="stat" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
@@ -136,7 +132,7 @@
                   <h5 class="widget-user-desc">{{ratioVictory}} % matches won</h5>
                 </div>
                 <div class="box-footer no-padding">
-                  <ul class="nav nav-stacked">
+                  <ul class="nav nav-stacked" style="max-height: 480px;overflow: scroll;">
                     <li ng-repeat="map in mapsRatio | orderBy:'-value'"><a ui-sref="stat"><img src="images/maps/{{map.name}}.png" height="50px" width="70px"/>&nbsp;&nbsp;{{map.name}} <span class="pull-right badge bg-blue">{{map.value}}</span></a></li>
                   </ul>
                 </div>
@@ -151,10 +147,10 @@
                     <img class="img-circle" src="../dist/img/weapons.jpg" alt="User Avatar">
                   </div><!-- /.widget-user-image -->
                   <h3 class="widget-user-username">Weapons</h3>
-                  <h5 class="widget-user-desc">{{user.displayName}}</h5>
+                  <h5 class="widget-user-desc">Total kills</h5>
                 </div>
                 <div class="box-footer no-padding">
-                  <ul class="nav nav-stacked">
+                  <ul class="nav nav-stacked" style="max-height: 480px;overflow: scroll;">
                     <li ng-repeat="weapon in weaponsKills | orderBy:'-value'"><a ui-sref="stat"><img src="images/weapons/basics/{{weapon.name}}.png" height="50px" width="70px"/>&nbsp;&nbsp;{{weapon.name}} <span class="pull-right badge bg-blue">{{weapon.value}}</span></a></li>
                   </ul>
                 </div>
@@ -169,10 +165,10 @@
                     <img class="img-circle" src="../dist/img/weapons.jpg" alt="User Avatar">
                   </div><!-- /.widget-user-image -->
                   <h3 class="widget-user-username">Weapons</h3>
-                  <h5 class="widget-user-desc">{{user.displayName}}</h5>
+                  <h5 class="widget-user-desc">Hits/Shots</h5>
                 </div>
                 <div class="box-footer no-padding">
-                  <ul class="nav nav-stacked">
+                  <ul class="nav nav-stacked" style="max-height: 480px;overflow: scroll;">
                     <li ng-repeat="weapon in weaponsRatio | orderBy:'-value'"><a ui-sref="stat"><img src="images/weapons/basics/{{weapon.name}}.png" height="50px" width="70px"/>&nbsp;&nbsp;{{weapon.name}} <span class="pull-right badge bg-blue">{{weapon.value}} %</span></a></li>
                   </ul>
                 </div>
