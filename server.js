@@ -5,14 +5,16 @@
 var express    = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+var http = require('http');
 var app        = express();
-//var socketsChat = require('socket.io').listen(app).of('/chat');
+var server = http.createServer(app);
+var io = require('socket.io').listen(server).of('/chat');
+//var ioUrls = require('socket.io').listen(server).of('/urls');
 var morgan     = require('morgan');
 var path = require('path');
 var passport = require('passport');
 var SteamStrategy = require('passport-steam').Strategy;
 var db = require('./db');
-var http = require('http');
 var steamApiKey = '336F47CADE44154B12B320F6F6B4AA02';
 
 /******************************************************
@@ -299,13 +301,8 @@ router.route('/bears/:bear_id')
                   Chat Websocket
 ******************************************************************/
 
-/*app.get('/chat', function(req, res, next){
-  console.log('get chat route', req.testing);
-  res.end();
-});*/
-
-/*socketsChat.on('connection', function(socket){
-
+io.on('connection', function(socket){
+  console.log("client connected to the server !");
   //user send his username
   socket.on('user', function(username, photo){
     console.log(username+' connected to the chat !');
@@ -318,17 +315,49 @@ router.route('/bears/:bear_id')
     }
   });
 
-  socket.on('write', function(message){
+  socket.on('writeUrl', function(username, url, photo){
+    if(username&&url){
+      socket.broadcast.emit('url', username, url, photo, Date.now());
+    }
+  });
+
+  socket.on('write', function(username, message, photo){
     if(username){
-      socket.emit('message', usernameSocket, message, Date.now());
+      socket.broadcast.emit('message', username, message, photo, Date.now());
+    }
+    else{
+      socket.emit('error', 'Username is not set yet');
+    }
+  });
+});
+
+/******************************************************************
+                  Urls Websocket
+******************************************************************/
+
+/*ioUrls.on('connection', function(socket){
+  console.log("client connected to the server !");
+  //user send his username
+  socket.on('user', function(username){
+    console.log(username+' connected to the chat !');
+    socket.emit('join', username);
+  });
+
+  socket.on('disconnect', function(username){
+    if(username){
+      socket.emit('bye', username);
+    }
+  });
+
+  socket.on('write', function(username, url, photo){
+    if(username){
+      socket.broadcast.emit('message', username, url, photo, Date.now());
     }
     else{
       socket.emit('error', 'Username is not set yet');
     }
   });
 });*/
-
-
 
 // REGISTER OUR ROUTES -------------------------------
 app.get('/', routerView);
@@ -377,6 +406,6 @@ function ensureAuthenticated(req, res, next) {
   }
 });*/
 
-app.listen(port, function() {
+server.listen(port, function() {
       console.log('Server listening on port ' + port);
     })

@@ -23,7 +23,7 @@ App.controller("StatController", function($scope, $http, Auth) {
 		}).then(function successCallback(response) {
 			$scope.stats = response.data.playerstats.stats;
 			$scope.achievements = response.data.playerstats.achievements;
-			console.log($scope.stats);
+
 			getWeaponsKillList();
 			getRatioVictory();
 			getMapsRatioList();
@@ -68,7 +68,6 @@ App.controller("StatController", function($scope, $http, Auth) {
 
 	function getRatioVictory(){
 		$scope.ratioVictory = (($scope.stats[127].value/$scope.stats[128].value)*100).toPrecision(2);
-		console.log($scope.ratioVictory);
 	}
 
 	function getWeaponsPrecisionList(){
@@ -212,5 +211,11 @@ App.controller("StatController", function($scope, $http, Auth) {
 			$scope.mapsRatio[i].name = $scope.mapsRatio[i].name.split('_')[4];
 		}
 	}
+
+	$(function(){
+		$('#content').slimScroll({
+			height:'750px'
+		});
+	});
 
 });
