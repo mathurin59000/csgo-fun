@@ -212,10 +212,5 @@ App.controller("StatController", function($scope, $http, Auth) {
 		}
 	}
 
-	$(function(){
-		$('#content').slimScroll({
-			height:'750px'
-		});
-	});
 
 });

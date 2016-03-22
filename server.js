@@ -9,7 +9,6 @@ var http = require('http');
 var app        = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server).of('/chat');
-//var ioUrls = require('socket.io').listen(server).of('/urls');
 var morgan     = require('morgan');
 var path = require('path');
 var passport = require('passport');
@@ -43,7 +42,7 @@ app.use(require('express-session')({
 var port     = process.env.PORT || 8080; // set our port
 
 /*var mongoose   = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/mydatabase'); // connect to our database*/
+mongoose.connect('mongodb://localhost:27017/csgo'); // connect to our database*/
 var Bear     = require('./app/models/bear');
 
 
@@ -66,13 +65,15 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
+var dev = 'http://localhost:8080/';
+var prod = 'https://csgo-fun.herokuapp.com/'
 // Use the SteamStrategy within Passport.
 //   Strategies in passport require a `validate` function, which accept
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new SteamStrategy({
-    returnURL: 'http://localhost:8080/auth/steam/return',
-    realm: 'http://localhost:8080/',
+    returnURL: 'https://csgo-fun.herokuapp.com/auth/steam/return',
+    realm: 'https://csgo-fun.herokuapp.com/',
     apiKey: '336F47CADE44154B12B320F6F6B4AA02'
   },
   function(identifier, profile, done) {
@@ -298,7 +299,7 @@ router.route('/bears/:bear_id')
 
 
 /******************************************************************
-                  Chat Websocket
+                  Chat and Urls Websockets
 ******************************************************************/
 
 io.on('connection', function(socket){
@@ -330,34 +331,6 @@ io.on('connection', function(socket){
     }
   });
 });
-
-/******************************************************************
-                  Urls Websocket
-******************************************************************/
-
-/*ioUrls.on('connection', function(socket){
-  console.log("client connected to the server !");
-  //user send his username
-  socket.on('user', function(username){
-    console.log(username+' connected to the chat !');
-    socket.emit('join', username);
-  });
-
-  socket.on('disconnect', function(username){
-    if(username){
-      socket.emit('bye', username);
-    }
-  });
-
-  socket.on('write', function(username, url, photo){
-    if(username){
-      socket.broadcast.emit('message', username, url, photo, Date.now());
-    }
-    else{
-      socket.emit('error', 'Username is not set yet');
-    }
-  });
-});*/
 
 // REGISTER OUR ROUTES -------------------------------
 app.get('/', routerView);
@@ -395,7 +368,7 @@ function ensureAuthenticated(req, res, next) {
 // START THE SERVER
 // =============================================================================
 // Connect to Mongo on start
-/*db.connect('mongodb://localhost:27017/csgofun', function(err) {
+/*db.connect('mongodb://localhost:27017/csgo', function(err) {
   if (err) {
     console.log('Unable to connect to Mongo.');
     process.exit(1);
