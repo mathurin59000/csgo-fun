@@ -66,7 +66,7 @@ App.controller("RoomController", function($scope, Auth) {
 	  				username: $scope.user.displayName,
 	  				message: $scope.newMessage,
 	  				photo: $scope.user.photos[0].value,
-	  				time: Date.now();
+	  				time: Date.now()
 	  			};
 	  			$scope.chat.push(item);
 	  			$scope.newMessage = "";
@@ -89,5 +89,4 @@ App.controller("RoomController", function($scope, Auth) {
 	  		}
 	  	}
 	  };
-
 });
