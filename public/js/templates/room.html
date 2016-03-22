@@ -33,8 +33,14 @@
 		    </div>
 		  </div><!-- /.box (chat box) -->
 	</section><!-- /.Left col -->
-	<section class="col-lg-6 connectedSortable">
 
+	<section class="col-lg-6 connectedSortable">
+		<youtube width="{{yt.width}}" height="{{yt.height}}" videoid="{{yt.videoid}}"></youtube> 
+		</br>
+		<button class="btn btn-default btn-sm btn-success" ng-click="addVote('+1')"><i class="fa fa-thumbs-up"></i> +1</button>
+        <button class="btn btn-default btn-sm btn-danger" ng-click="addVote('-1')"><i class="fa fa-thumbs-down"></i> -1</button>
+        <span class="label label-warning">{{likes.length}} : {{unlikes.length}}</span>
+        <p><i class="fa fa-youtube-play"></i> Player status is: {{yt.playerStatus}}</p>
 	</section><!-- /.Left col -->
 
 	<section class="col-lg-3 connectedSortable">

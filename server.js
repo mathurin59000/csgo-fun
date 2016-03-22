@@ -316,6 +316,12 @@ io.on('connection', function(socket){
     }
   });
 
+  socket.on('writeVote', function(username, vote){
+    if(username){
+      socket.broadcast.emit('vote', username, vote, Date.now());
+    }
+  });
+
   socket.on('writeUrl', function(username, url, photo){
     if(username&&url){
       socket.broadcast.emit('url', username, url, photo, Date.now());

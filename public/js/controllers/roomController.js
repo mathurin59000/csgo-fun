@@ -3,7 +3,15 @@ App.controller("RoomController", function($scope, Auth) {
 	  console.log('dans RoomController');
 	  $scope.chat = [];
 	  $scope.urls = [];
+	  $scope.likes = [];
+	  $scope.unlikes = [];
 	  $scope.user = JSON.parse(Auth.isAuthenticated());
+	  $scope.yt = {
+	    width: 580, 
+	    height: 440, 
+	    videoid: "",
+	    playerStatus: "NOT PLAYING"
+	  };
 
 	  /******************************************************
 	  						Chat
@@ -45,6 +53,20 @@ App.controller("RoomController", function($scope, Auth) {
 	  	};
 	  	$scope.urls.push(item);
 	  	$scope.$apply();
+	  })
+	  .on('vote', function(username, vote, time){
+	  	var item = {
+	  		username: username,
+	  		time: time
+	  	};
+	  	if(vote=="+1"){
+	  		$scope.likes.push(item);
+	  		$scope.$apply();
+	  	}
+	  	else if(vote=="-1"){
+  			$scope.unlikes.push(item);
+  			$scope.$apply();
+	  	}
 	  })
 	  .on('message', function(username, message, photo, time){
 	  	console.log('event: message');
@@ -89,4 +111,58 @@ App.controller("RoomController", function($scope, Auth) {
 	  		}
 	  	}
 	  };
+
+	  $scope.addVote = function(vote){
+	  	var has_voted = getVoteRight();
+	  	if(!has_voted){
+	  		if(vote=="+1"){
+		  		socketChat.emit('writeVote', $scope.user.displayName, vote);
+		  		var item = {
+	  				username: $scope.user.displayName,
+	  				time: Date.now()
+	  			};
+		  		$scope.likes.push(item);
+		  		$scope.$apply();
+		  	}
+		  	else if(vote=="-1"){
+		  		socketChat.emit('writeVote', $scope.user.displayName, vote);
+		  		var item = {
+	  				username: $scope.user.displayName,
+	  				time: Date.now()
+	  			};
+	  			$scope.unlikes.push(item);
+	  			$scope.$apply();
+		  	}
+	  	}
+	  	else{
+	  		console.log('already voted...');
+	  	}
+	  };
+
+	  function getVoteRight(){
+	  	var has_voted = false;
+	  	$scope.likes.some(function name(element, index, array){
+	  		if (element.username==$scope.user.displayName) {
+	  			has_voted = true;
+	  			return true;
+	  		}
+	  	});
+	  	if (!has_voted) {
+	  		$scope.unlikes.some(function name(element, index, array){
+	  			if(element.username==$scope.user.displayName){
+	  				has_voted = true;
+	  				return true;
+	  			}
+	  		});
+	  	}
+	  	return has_voted;
+	  }
+
+	  function resetLikes(){
+	  	$scope.likes = [];
+	  	$scope.unlikes = [];
+	  }
+
+
+
 });
