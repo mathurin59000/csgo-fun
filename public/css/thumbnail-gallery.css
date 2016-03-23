@@ -6,3 +6,6 @@
 .thumb {
     margin-bottom: 30px;
 }
+.roulette {
+    -webkit-transition: -webkit-transform 5s ease-out;
+}

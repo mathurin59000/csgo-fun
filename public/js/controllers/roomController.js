@@ -1,6 +1,5 @@
 App.controller("RoomController", function($scope, Auth) {
 
-	  console.log('dans RoomController');
 	  $scope.chat = [];
 	  $scope.urls = [];
 	  $scope.likes = [];
