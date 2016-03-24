@@ -35,3 +35,7 @@
 #drawing_canvas {
     position: absolute;
 }
+
+.roulette {
+    -webkit-transition: -webkit-transform 5s ease-out;
+}

@@ -10,7 +10,6 @@ App.controller("AppController", function($scope, $http, Auth) {
 				if(response.data.passport.user){
 					Auth.login(response.data.passport.user);
 					$scope.user=response.data.passport.user;
-					console.log($scope.user);
 				}
 			}
 			else{
@@ -24,8 +23,6 @@ App.controller("AppController", function($scope, $http, Auth) {
 			// this callback will be called asynchronously
 		    // when the response is available
 		  }, function errorCallback(response) {
-		  	console.log("error");
-		  	console.log(response);
 		  	window.location.href=window.location.protocol+"//"+window.location.host+"/login";
 		    // called asynchronously if an error occurs
 		    // or server returns response with an error status.

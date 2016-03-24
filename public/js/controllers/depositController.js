@@ -2,11 +2,74 @@ App.controller("DepositController", function($scope) {
 
 	  $scope.helloTo = {};
 	  $scope.helloTo.title = "AngularJS";
+	  $scope.chat = [];
+
+	/**********************************************
+					Websocket
+	**********************************************/
+
+	var socketSpin = io.connect(window.location.protocol+"//"+window.location.host+"/chat");
+
+	socketSpin.on('connect', function(){
+	  	socketSpin.emit('user', $scope.user.displayName, $scope.user.photos[0].value);
+	  })
+	  .on('join', function(username, message, photo, time){
+	  	var item = {
+	  		username: username,
+	  		message: message,
+	  		photo: photo,
+	  		time: time
+	  	};
+	  	$scope.chat.push(item);
+	  	$scope.$apply();
+	  })
+	  .on('bye', function(username, message, photo, time){
+	  	var item = {
+	  		username: username,
+	  		message: message,
+	  		photo: photo,
+	  		time: time
+	  	};
+	  	$scope.chat.push(item);
+	  })
+	  .on('error', function(error){
+	  	alert('error spinChat : '+error);
+	  })
+	  .on('message', function(username, message, photo, time){
+	  	console.log('event: message');
+	  	var item = {
+	  		username: username,
+	  		message: message,
+	  		photo: photo,
+	  		time: time
+	  	};
+	  	$scope.chat.push(item);
+	  	$scope.$apply();
+	  });
+
+	  $scope.sendMessage = function(){
+	  	if($scope.newMessage&&typeof($scope.newMessage)!=undefined){
+	  		if($scope.newMessage.length>0){
+	  			socketSpin.emit('write', $scope.user.displayName, $scope.newMessage, $scope.user.photos[0].value);
+	  			var item = {
+	  				username: $scope.user.displayName,
+	  				message: $scope.newMessage,
+	  				photo: $scope.user.photos[0].value,
+	  				time: Date.now()
+	  			};
+	  			$scope.chat.push(item);
+	  			$scope.newMessage = "";
+	  		}
+	  	}
+	  };
+
+
+	/**********************************************
+					Wheel
+	**********************************************/
 
 	  var width = window.innerWidth;
     var height = window.innerHeight;
-    console.log(width);
-    console.log(height);
 
     Konva.angleDeg = false;
     var angularVelocity = 6;
@@ -118,7 +181,6 @@ App.controller("DepositController", function($scope) {
 	    		s = getBlackColor();
 	    	}
     	}
-    	console.log(s);
         //var s = getRandomColor();
         var reward =  "";//getRandomReward();
         var r = s[0];
@@ -223,7 +285,9 @@ App.controller("DepositController", function($scope) {
                 }).play();
 
                 if(activeWedge) {
+                	console.log("Wedge activated");
                     activeWedge.setFillPriority('radial-gradient');
+                    console.log(activeWedge);
                 }
                 shape.setFillPriority('fill');
                 activeWedge = shape;

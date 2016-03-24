@@ -26,18 +26,14 @@ App.controller("ProfileController", function($scope, Auth, $http) {
 	var spinner = new Spinner(opts).spin(target);
 
 	$scope.user = JSON.parse(Auth.isAuthenticated());
-	console.log($scope.user);
 	$scope.inventory = [];
 	$scope.descriptions = [];
 	$scope.myInventory = [];
-
-	var types = ["Case", "|"];
 
 	$http({
 	  method: 'GET',
 	  url: '/api/inventory?id='+$scope.user.id
 	}).then(function successCallback(response) {
-		console.log(response.data);
 		var objInventory = response.data.rgInventory;
 		for (var i in objInventory) {
 			$scope.inventory.push(objInventory[i]);
@@ -53,8 +49,6 @@ App.controller("ProfileController", function($scope, Auth, $http) {
 		// this callback will be called asynchronously
 	    // when the response is available
 	}, function errorCallback(response) {
-	  	console.log("error");
-	  	console.log(response.data);
 	    // called asynchronously if an error occurs
 	    // or server returns response with an error status.
 	});
@@ -67,56 +61,12 @@ App.controller("ProfileController", function($scope, Auth, $http) {
 					var obj = {
 						name: desc.name,
 						market_name: desc.market_name,
-						photo: ""
+						photo: "http://steamcommunity-a.akamaihd.net/economy/image/"+desc.icon_url
 					};
-					if(desc.name.indexOf("Coin")>=0){
-						if(desc.name.indexOf("Breakout")>0){
-
-						}
-						else if(desc.name.indexOf("Phoenix")>0){
-
-						}
-						else if(desc.name.indexOf("Bloodhound")>0){
-
-						}
-						else if(desc.name.indexOf("Wildfire")>0){
-
-						}
-					}
-					else if(desc.name.indexOf("Case")>=0){
-						if(desc.name.indexOf("Breakout")>=0){
-							obj.photo="case/breakout.png";
-						}
-						else if(desc.name.indexOf("Phoenix")>=0){
-							obj.photo="case/phoenix.png";
-						}
-						else if(desc.name.indexOf("Chroma")>=0){
-							obj.photo="case/chroma.png";
-						}
-						else if(desc.name.indexOf("Chroma 2")>=0) {
-							obj.photo="case/chroma2.png";
-						}
-						else if(desc.name.indexOf("Falchion")>=0){
-							obj.photo="case/falchion.png";
-						}
-						else if(desc.name.indexOf("Revolver")>=0){
-							obj.photo="case/revolver.png";
-						}
-						else if(desc.name.indexOf("Shadow")>=0){
-							obj.photo="case/shadow.png";
-						}
-						else if(desc.name.indexOf("Wildfire")>=0){
-							obj.photo="case/wildfire.png";
-						}
-					}
-					else if(desc.name.indexOf("|")>=0){
-
-					}
 					$scope.myInventory.push(obj);
 				}
 			});
 		});
-		console.log($scope.myInventory);
 	};
 
 
