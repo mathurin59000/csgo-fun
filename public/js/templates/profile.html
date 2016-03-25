@@ -67,9 +67,11 @@
                 <h1 class="page-header">Inventory ({{myInventory.length}})</h1><div id="spin"></div>
             </div>
 
-            <div class="col-lg-2 col-md-3 col-xs-6 thumb" ng-repeat="item in myInventory">
+            <div class="col-lg-2 col-md-3 col-xs-6 thumb" ng-repeat="item in myInventoryWithPrices">
                 <a class="thumbnail">
                     <img class="img-responsive" src="{{item.photo}}" style="height:90.2656px;" alt="" title="{{item.market_name}}">
+                    <span class="label label-warning" ng-if="item.price">{{item.price}}</span>
+                    <span class="label label-warning" ng-if="!item.price">0</span>
                 </a>
             </div>
     </div><!-- /.col -->

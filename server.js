@@ -15,6 +15,8 @@ var passport = require('passport');
 var SteamStrategy = require('passport-steam').Strategy;
 var db = require('./db');
 var steamApiKey = '336F47CADE44154B12B320F6F6B4AA02';
+var backpackApiKey = '56f5373dc440454b3b63a179';
+var marketPrices;
 
 /******************************************************
                   Configuration
@@ -181,6 +183,10 @@ router.get('/inventory', function(req, res){
 // Retrieve steamid and passport (accessed at GET http://localhost:8080/api/steamid)
 router.get('/steamid', function(req, res){
   res.json(req.session);
+});
+
+router.get('/marketprice', function(req, res){
+  res.json(marketPrices);
 });
 
 /******************************************************
@@ -369,6 +375,38 @@ app.use('/static', express.static(__dirname + '/public'));
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/');
+}
+
+
+
+http.get('http://backpack.tf/api/IGetMarketPrices/v1/?key='+backpackApiKey+'&appid=730', function(response) {
+    // Continuously update stream with data
+    var body = '';
+    response.on('data', function(d) {
+        body += d;
+    });
+    response.on('end', function() {
+        // Data reception is done, do whatever with it!
+        var parsed = JSON.parse(body);
+        marketPrices=parsed;
+    });
+});
+
+function repeatMarketPrice(){
+  setTimeout(function(){ 
+    http.get('http://backpack.tf/api/IGetMarketPrices/v1/?key='+backpackApiKey+'&appid=730', function(response) {
+        // Continuously update stream with data
+        var body = '';
+        response.on('data', function(d) {
+            body += d;
+        });
+        response.on('end', function() {
+            // Data reception is done, do whatever with it!
+            var parsed = JSON.parse(body);
+            marketPrices = parsed;
+        });
+    }); 
+  }, 320000);
 }
 
 // START THE SERVER

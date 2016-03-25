@@ -29,11 +29,14 @@ App.controller("ProfileController", function($scope, Auth, $http) {
 	$scope.inventory = [];
 	$scope.descriptions = [];
 	$scope.myInventory = [];
+	$scope.myInventoryWithPrices = [];
+	var marketPrices;
 
 	$http({
 	  method: 'GET',
 	  url: '/api/inventory?id='+$scope.user.id
 	}).then(function successCallback(response) {
+		//console.log(response);
 		var objInventory = response.data.rgInventory;
 		for (var i in objInventory) {
 			$scope.inventory.push(objInventory[i]);
@@ -43,6 +46,7 @@ App.controller("ProfileController", function($scope, Auth, $http) {
 			$scope.descriptions.push(objDescriptions[i]);
 		}
 		retrieveInventory();
+		retrieveMarketPrice();
 		spinner.stop();
 		//console.log($scope.inventory);	
 		//console.log($scope.descriptions);		
@@ -68,6 +72,49 @@ App.controller("ProfileController", function($scope, Auth, $http) {
 			});
 		});
 	};
+
+	function retrieveMarketPrice(){
+		$http({
+		  method: 'GET',
+		  url: '/api/marketprice'
+		}).then(function successCallback(response) {
+			if (response) {
+				marketPrices = response.data.response.items;
+				prepareInventoryWithPrices();
+			}
+			// this callback will be called asynchronously
+		    // when the response is available
+		  }, function errorCallback(response) {
+		  	console.log(response);
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		  });
+	}
+
+	function prepareInventoryWithPrices (){
+		$scope.myInventory.forEach(function name(element, index, array){
+			if(element.market_name.indexOf('Coin')<0&&element.market_name.indexOf('Medal')<0){
+				var market_name = element.market_name;
+				var item = {
+					name: element.name,
+					market_name: element.market_name,
+					photo: element.photo,
+					price: 0
+				};
+				item.price = roundDecimal(((marketPrices[market_name.toString()].value)/100));
+				$scope.myInventoryWithPrices.push(item);
+			}
+			else{
+				$scope.myInventoryWithPrices.push(element);
+			}
+		});
+	}
+
+	function roundDecimal(nombre, precision){
+	    var precision = precision || 2;
+	    var tmp = Math.pow(10, precision);
+	    return Math.round( nombre*tmp )/tmp;
+	}
 
 
 });
