@@ -17,6 +17,8 @@ var db = require('./db');
 var steamApiKey = '336F47CADE44154B12B320F6F6B4AA02';
 var backpackApiKey = '56f5373dc440454b3b63a179';
 var marketPrices;
+var urls=[];
+var allClients=[];
 
 /******************************************************
                   Configuration
@@ -311,32 +313,70 @@ router.route('/bears/:bear_id')
 io.on('connection', function(socket){
   console.log("client connected to the server !");
   //user send his username
-  socket.on('user', function(username, photo){
+  socket.on('user', function(id, username, photo){
     console.log(username+' connected to the chat !');
-    socket.emit('join', username, ' is connecting to the chat !', photo, Date.now());
+    var item = {
+      'socket': socket,
+      'id': id
+    };
+    allClients.push(item);
+    socket.emit('join', id, username, ' is connecting to the chat !', photo, urls, Date.now());
   });
 
-  socket.on('disconnect', function(username, photo){
-    if(username){
-      socket.emit('bye', username, ' disconnected', photo, Date.now());
-    }
+  socket.on('disconnect', function(){
+      var id;
+      allClients.some(function name(element, index, array){
+        if(element.socket==socket){
+          urls.some(function name2(element2, index2, array2){
+            if(element.id==element2.id){
+              urls.splice(index2, 1);
+              return true;
+            }
+          });
+          id=element.id;
+          allClients.splice(index, 1);
+          return true
+        }
+      });
+      socket.broadcast.emit('bye', id);
   });
 
-  socket.on('writeVote', function(username, vote){
+  socket.on('writeVote', function(id, username, vote){
     if(username){
       socket.broadcast.emit('vote', username, vote, Date.now());
     }
   });
 
-  socket.on('writeUrl', function(username, url, photo){
-    if(username&&url){
-      socket.broadcast.emit('url', username, url, photo, Date.now());
+  socket.on('writeUrl', function(id, username, url, photo){
+    if(id&&username&&url){
+      var item = {
+        id: id,
+        username: username,
+        url: url,
+        photo: photo,
+        time: Date.now()
+      };
+      urls.push(item);
+      socket.broadcast.emit('addUrl', id, username, url, photo, Date.now());
     }
   });
 
-  socket.on('write', function(username, message, photo){
+  socket.on('playVideo', function(id, username, url, photo){
+    if(urls[0].id=id){
+      socket.broadcast.emit('receivePlayVideo', urls[0].id, urls[0].username, urls[0].url, urls[0].photo);
+    }
+  });
+
+  socket.on('deleteUrl', function(id, username, url, photo){
+    if(urls.length>0&&urls[0].id==id&&urls[0].url==url){
+      urls.shift();
+      socket.broadcast.emit('removeUrl', id, username, url, photo);
+    }
+  });
+
+  socket.on('writeMessage', function(id, username, message, photo){
     if(username){
-      socket.broadcast.emit('message', username, message, photo, Date.now());
+      socket.broadcast.emit('message', id, username, message, photo, Date.now());
     }
     else{
       socket.emit('error', 'Username is not set yet');

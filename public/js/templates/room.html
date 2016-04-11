@@ -1,5 +1,45 @@
 <section class="content">
 
+<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document" style="width: 80%;margin-left: 10%;margin-right: 10%;">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <form ng-submit="search(true)">
+	          <div class="input-group">
+		        <input class="form-control" placeholder="Search from Youtube..." ng-model="query">
+		        <div class="input-group-btn">
+		          <button class="btn btn-success" ng-click="search(true)"><i class="fa fa-search"></i>&nbsp;Search</button>
+		        </div>
+		      </div>
+		    </form>
+	      </div>
+	      <div class="modal-body">
+	        
+		    <div class="box box-success">
+		    <div class="box-header">
+		      <h3 class="box-title">Results ({{results.length}})</h3>
+		    </div>
+	    <div class="box-body chat">
+	        <div class="item" ng-repeat="item in results">
+	          <img src="{{item.snippet.thumbnails.default.url}}" alt="user image" class="online">
+	          <p class="message">
+	            <a class="name">
+	              <small class="text-muted pull-right"><button type="button" class="btn btn-success btn-sm" ng-click="sendUrl(item)" data-dismiss="modal"><i class="fa fa-plus"></i>&nbsp;Add</button></small>
+	            {{item.snippet.title}}
+	            </a>
+	          {{item.snippet.description}}
+	          </p>
+	        </div><!-- /.item -->
+	        </div>
+	        </div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
 <div class="row">
 	<section class="col-lg-3 connectedSortable">
@@ -7,16 +47,16 @@
 		  <div class="box box-success">
 		    <div class="box-header">
 		      <i class="fa fa-comments-o"></i>
-		      <h3 class="box-title">Urls</h3>
+		      <h3 class="box-title">Dj's</h3>
 		    </div>
-		    <div class="box-body chat" id="chat-box">
+		    <div class="box-body chat">
 		      <!-- chat item -->
-		      <div style="height: 750px;">
+		      <div style="height: 750px;max-height: 750px;overflow: scroll;overflow-x: hidden;">
 			      <div class="item" ng-repeat="item in urls">
 			        <img src="{{item.photo}}" alt="user image" class="online">
 			        <p class="message">
 			          <a href="#" class="name">
-			            <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{item.time}}</small>
+			            <!--<small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{item.time}}&nbsp;</small>-->
 			            {{item.username}}
 			          </a>
 			          {{item.url}}
@@ -24,23 +64,31 @@
 			      </div><!-- /.item -->
 			  </div>
 		    <div class="box-footer">
-		      <div class="input-group">
-		        <input class="form-control" placeholder="Type url..." ng-model="newUrl">
+		      	<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#myModal">
+				  Add Video
+				</button>
+		        <!--<input class="form-control" placeholder="Type url..." ng-model="newUrl">
 		        <div class="input-group-btn">
 		          <button class="btn btn-success" ng-click="sendUrl()">Send</button>
-		        </div>
-		      </div>
+		        </div>-->
 		    </div>
 		  </div><!-- /.box (chat box) -->
 	</section><!-- /.Left col -->
 
+	
+
 	<section class="col-lg-6 connectedSortable">
-		<youtube width="{{yt.width}}" height="{{yt.height}}" videoid="{{yt.videoid}}"></youtube> 
-		</br>
+		<div class="callout callout-warning">
+	        <h4><i class="icon fa fa-warning"></i> Warning !</h4>
+	        <p>If the youtube player is not displayed, refresh the page.</p>
+	      </div>
+		<div id="player">
+	      <div id="placeholder" style="width: 100%"></div>
+	    </div>
 		<button class="btn btn-default btn-sm btn-success" ng-click="addVote('+1')"><i class="fa fa-thumbs-up"></i> +1</button>
         <button class="btn btn-default btn-sm btn-danger" ng-click="addVote('-1')"><i class="fa fa-thumbs-down"></i> -1</button>
         <span class="label label-warning">{{likes.length}} : {{unlikes.length}}</span>
-        <p><i class="fa fa-youtube-play"></i> Player status is: {{yt.playerStatus}}</p>
+        <p><i class="fa fa-youtube-play"></i> Player status is: </p>
 	</section><!-- /.Left col -->
 
 	<section class="col-lg-3 connectedSortable">
@@ -50,14 +98,14 @@
 	      <i class="fa fa-comments-o"></i>
 	      <h3 class="box-title">Chat</h3>
 	    </div>
-	    <div class="box-body chat" id="chat-box">
+	    <div class="box-body chat">
 	      <!-- chat item -->
-	      <div style="height: 750px;">
+	      <div style="height: 750px;max-height: 750px;overflow: scroll;overflow-x: hidden;">
 		      <div class="item" ng-repeat="item in chat">
 		        <img src="{{item.photo}}" alt="user image" class="online">
 		        <p class="message">
 		          <a href="#" class="name">
-		            <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{item.time}}</small>
+		            <!--<small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{item.time}}&nbsp;</small>-->
 		            {{item.username}}
 		          </a>
 		          {{item.message}}
@@ -65,12 +113,14 @@
 		      </div><!-- /.item -->
 		  </div>
 	    <div class="box-footer">
-	      <div class="input-group">
-	        <input class="form-control" placeholder="Type message..." ng-model="newMessage">
-	        <div class="input-group-btn">
-	          <button class="btn btn-success" ng-click="sendMessage()">Send</button>
-	        </div>
-	      </div>
+		    <form ng-submit="sendMessage()">
+		      <div class="input-group">
+		        <input class="form-control" placeholder="Type message..." ng-model="newMessage">
+		        <div class="input-group-btn">
+		          <button class="btn btn-success" ng-click="sendMessage()">Send</button>
+		        </div>
+		      </div>
+		    </form>
 	    </div>
 	  </div><!-- /.box (chat box) -->
     </section><!-- right col -->

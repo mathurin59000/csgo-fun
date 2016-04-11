@@ -35,6 +35,8 @@
 
     <link rel="stylesheet" href="css/thumbnail-gallery.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="css/ng-slim-scroll.css">
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -413,6 +415,7 @@
     <!-- jQuery UI 1.11.4 -->
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script src="plugins/jQuery/jquery.tinysort.min.js"></script>
     <script>
       $.widget.bridge('uibutton', $.ui.button);
     </script>
@@ -436,14 +439,13 @@
     <!-- Bootstrap WYSIHTML5 -->
     <script src="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
     <!-- Slimscroll -->
-    <script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <!--<script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
     <script src="plugins/fastclick/fastclick.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/app.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="dist/js/demo.js"></script>
-    <!--<script src="js/dependencies/ng-slim-scroll.js"></script>-->
     <script src="js/dependencies/socket.io.js"></script>
     <script src="js/dependencies/spin.js"></script>
     <script src="https://cdn.rawgit.com/konvajs/konva/0.11.1/konva.min.js"></script>
@@ -463,6 +465,7 @@
     <script src="js/controllers/profileController.js"></script>
     <script src="js/services/auth.js"></script>
     <script src="js/services/localStorage.js"></script>
+    <script src="js/services/videoService.js"></script>
 
     <script src="plugins/morris/morris.min.js"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->

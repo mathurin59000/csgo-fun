@@ -8,343 +8,326 @@ App.controller("DepositController", function($scope) {
 					Websocket
 	**********************************************/
 
-	var socketSpin = io.connect(window.location.protocol+"//"+window.location.host+"/chat");
-
-	socketSpin.on('connect', function(){
-	  	socketSpin.emit('user', $scope.user.displayName, $scope.user.photos[0].value);
-	  })
-	  .on('join', function(username, message, photo, time){
-	  	var item = {
-	  		username: username,
-	  		message: message,
-	  		photo: photo,
-	  		time: time
-	  	};
-	  	$scope.chat.push(item);
-	  	$scope.$apply();
-	  })
-	  .on('bye', function(username, message, photo, time){
-	  	var item = {
-	  		username: username,
-	  		message: message,
-	  		photo: photo,
-	  		time: time
-	  	};
-	  	$scope.chat.push(item);
-	  })
-	  .on('error', function(error){
-	  	alert('error spinChat : '+error);
-	  })
-	  .on('message', function(username, message, photo, time){
-	  	console.log('event: message');
-	  	var item = {
-	  		username: username,
-	  		message: message,
-	  		photo: photo,
-	  		time: time
-	  	};
-	  	$scope.chat.push(item);
-	  	$scope.$apply();
-	  });
-
-	  $scope.sendMessage = function(){
-	  	if($scope.newMessage&&typeof($scope.newMessage)!=undefined){
-	  		if($scope.newMessage.length>0){
-	  			socketSpin.emit('write', $scope.user.displayName, $scope.newMessage, $scope.user.photos[0].value);
-	  			var item = {
-	  				username: $scope.user.displayName,
-	  				message: $scope.newMessage,
-	  				photo: $scope.user.photos[0].value,
-	  				time: Date.now()
-	  			};
-	  			$scope.chat.push(item);
-	  			$scope.newMessage = "";
-	  		}
-	  	}
-	  };
-
 
 	/**********************************************
 					Wheel
 	**********************************************/
 
-	  var width = window.innerWidth;
-    var height = window.innerHeight;
-
-    Konva.angleDeg = false;
-    var angularVelocity = 6;
-    var angularVelocities = [];
-    var lastRotations = 0;
-    var controlled = false;
-    var numWedges = 15;
-    var angularFriction = 0.2;
-    var target, activeWedge, stage, layer, wheel, pointer;
-
-    function getAverageAngularVelocity() {
-        var total = 0;
-        var len = angularVelocities.length;
-
-        if(len === 0) {
-            return 0;
-        }
-
-        for(var n = 0; n < len; n++) {
-            total += angularVelocities[n];
-        }
-
-        return total / len;
+	String.prototype.hashCode = function(){
+    // See http://www.cse.yorku.ca/~oz/hash.html    
+    var hash = 5381;
+    for (i = 0; i < this.length; i++) {
+      char = this.charCodeAt(i);
+      hash = ((hash<<5)+hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
     }
-    function purifyColor(color) {
-        var randIndex = Math.round(Math.random() * 3);
-        color[randIndex] = 0;
-        return color;
+    return hash;
+  }
+
+  Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+  }
+
+  function isBlackOrRed(number){
+    if(number%2!=0){
+      console.log('BLACK');
     }
-    function getRedColor(){
-    	var r = 255;
-        var g = 0;
-        var b = 0;
-        var color = [r, g, b];
-        return color;
+    else{
+      console.log('RED');
     }
-    function getBlackColor(){
-    	var r = 0;
-        var g = 0;
-        var b = 0;
-        var color = [r, g, b];
-        return color;
-    }
-    function getGreenColor(){
-    	var r = 0;
-        var g = 255;
-        var b = 0;
-        var color = [r, g, b];
-        return color;
-    }
-    function getRandomColor() {
-        var r = 100 + Math.round(Math.random() * 55);
-        var g = 100 + Math.round(Math.random() * 55);
-        var b = 100 + Math.round(Math.random() * 55);
-        var color = [r, g, b];
-        color = purifyColor(color);
-        color = purifyColor(color);
+  }
 
-        return color;
-    }
-    function bind() {
-        wheel.on('mousedown', function(evt) {
-            angularVelocity = 0;
-            controlled = true;
-            target = evt.target;
-        });
-        // add listeners to container
-        document.body.addEventListener('mouseup', function() {
-            controlled = false;
-            angularVelocity = getAverageAngularVelocity() * 5;
+  var angleSegment;
+  var angleWheel;
 
-            if(angularVelocity > 20) {
-                angularVelocity = 20;
-            }
-            else if(angularVelocity < -20) {
-                angularVelocity = -20;
-            }
+  var wheel = {
 
-            angularVelocities = [];
-        }, false);
+    timerHandle : 0,
+    timerDelay : 33,
 
-        document.body.addEventListener('mousemove', function(evt) {
-            var mousePos = stage.getPointerPosition();
-            if(controlled && mousePos && target) {
-                var x = mousePos.x - wheel.getX();
-                var y = mousePos.y - wheel.getY();
-                var atan = Math.atan(y / x);
-                var rotation = x >= 0 ? atan : atan + Math.PI;
-                var targetGroup = target.getParent();
+    angleCurrent : 0,
+    angleDelta : 0,
 
-                wheel.setRotation(rotation - targetGroup.startRotation - (target.getAngle() / 2));
-            }
-        }, false);
-    }
-    function getRandomReward() {
-        var mainDigit = Math.round(Math.random() * 9);
-        return mainDigit + '\n0\n0';
-    }
-    function addWedge(n) {
-    	var s;
-    	if(n==numWedges){
-    		s = getGreenColor();
-    	}
-    	else{
-    		if(n%2==0){
-	    		s = getRedColor();
-	    	}
-	    	else{
-	    		s = getBlackColor();
-	    	}
-    	}
-        //var s = getRandomColor();
-        var reward =  "";//getRandomReward();
-        var r = s[0];
-        var g = s[1];
-        var b = s[2];
-        var angle = 2 * Math.PI / numWedges;
+    size : 190,
 
-        var endColor = 'rgb(' + r + ',' + g + ',' + b + ')';
-        r += 100;
-        g += 100;
-        b += 100;
+    canvasContext : null,
 
-        var startColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+    colors : ['#b9121b', '#000000', '#b9121b', '#000000', '#b9121b', '#000000', '#b9121b', '#000000', '#b9121b', '#000000', '#b9121b', '#000000', '#b9121b', '#000000', '#b9121b', '#000000'],
 
-        var wedge = new Konva.Group({
-            rotation: 2 * n * Math.PI / numWedges,
-        });
+    segments : [ "14", "13", '12', '11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1'],
 
-        var wedgeBackground = new Konva.Wedge({
-            radius: 400,
-            angle: angle,
-            fillRadialGradientStartPoint: 0,
-            fillRadialGradientStartRadius: 0,
-            fillRadialGradientEndPoint: 0,
-            fillRadialGradientEndRadius: 400,
-            fillRadialGradientColorStops: [0, startColor, 1, endColor],
-            fill: '#64e9f8',
-            fillPriority: 'radial-gradient',
-            stroke: '#ccc',
-            strokeWidth: 2
-        });
+    seg_colors : [], // Cache of segments to colors
+    
+    maxSpeed : Math.PI / 16,
 
-        wedge.add(wedgeBackground);
+    upTime : 1000, // How long to spin up for (in ms)
+    downTime : 10000, // How long to slow down for (in ms)
 
-        var text = new Konva.Text({
-            text: reward,
-            fontFamily: 'Calibri',
-            fontSize: 50,
-            fill: 'white',
-            align: 'center',
-            stroke: 'yellow',
-            strokeWidth: 1
+    spinStart : 0,
 
-        });
+    frames : 0,
 
-        // cache text as an image to improve performance
-        text.toImage({
-            width: text.getWidth(),
-            height: text.getHeight(),
-            callback: function(img) {
-                var cachedText = new Konva.Image({
-                    image: img,
-                    listening: false,
-                    rotation: (Math.PI + angle) / 2,
-                    x: 380,
-                    y: 30
-                });
+    centerX : 200,
+    centerY : 200,
 
-                wedge.add(cachedText);
-                layer.draw();
-            }
-        });
+    spin : function() {
 
-        wedge.startRotation = wedge.getRotation();
+      // Start the wheel only if it's not already spinning
+      if (wheel.timerHandle == 0) {
+        wheel.spinStart = new Date().getTime();
+        wheel.maxSpeed = Math.PI / (16 + Math.random()); // Randomly vary how hard the spin is
+        wheel.frames = 0;
+        //wheel.sound.play();
 
-        wheel.add(wedge);
-    }
-    function animate(frame) {
-        // handle wheel spin
-        var angularVelocityChange = angularVelocity * frame.timeDiff * (1 - angularFriction) / 1000;
-        angularVelocity -= angularVelocityChange;
+        wheel.timerHandle = setInterval(wheel.onTimerTick, wheel.timerDelay);
+      }
+    },
 
-        if(controlled) {
-            if(angularVelocities.length > 10) {
-                angularVelocities.shift();
-            }
+    onTimerTick : function() {
 
-            angularVelocities.push((wheel.getRotation() - lastRotation) * 1000 / frame.timeDiff);
-        }
-        else {
-            wheel.rotate(frame.timeDiff * angularVelocity / 1000);
-        }
-        lastRotation = wheel.getRotation();
+      wheel.frames++;
 
-        // activate / deactivate wedges based on point intersection
-        var intersection = stage.getIntersection({
-            x: stage.getWidth() / 2,
-            y: 100
-        });
+      wheel.draw();
 
-        if(intersection) {
-            var shape = intersection.shape;
+      var duration = (new Date().getTime() - wheel.spinStart);
+      var progress = 0;
+      var finished = false;
 
-            if(shape && (!activeWedge || (shape._id !== activeWedge._id))) {
-                pointer.setY(20);
+      if (duration < wheel.upTime) {
+        progress = duration / wheel.upTime;
+        wheel.angleDelta = wheel.maxSpeed
+            * Math.sin(progress * Math.PI / 2);
+      } else {
+        progress = duration / wheel.downTime;
+        wheel.angleDelta = wheel.maxSpeed
+            * Math.sin(progress * Math.PI / 2 + Math.PI / 2);
+        if (progress >= 1)
+          finished = true;
+      }
 
-                new Konva.Tween({
-                    node: pointer,
-                    duration: 0.3,
-                    y: 30,
-                    easing: Konva.Easings.ElasticEaseOut
-                }).play();
+      wheel.angleCurrent += wheel.angleDelta;
+      while (wheel.angleCurrent >= Math.PI * 2)
+        // Keep the angle in a reasonable range
+        wheel.angleCurrent -= Math.PI * 2;
 
-                if(activeWedge) {
-                	console.log("Wedge activated");
-                    activeWedge.setFillPriority('radial-gradient');
-                    console.log(activeWedge);
-                }
-                shape.setFillPriority('fill');
-                activeWedge = shape;
-            }
-        }
-    }
-    function init() {
-        stage = new Konva.Stage({
-            container: 'container',
-            width: 800,
-            height: 400
-        });
-        layer = new Konva.Layer();
-        wheel = new Konva.Group({
-            x: stage.getWidth()/2,
-            y: 450
-        });
+      if (finished) {
+        console.log("finished !");
+        seg = (wheel.angleCurrent/angleSegment)-(wheel.angleCurrent/angleSegment)%1;
+        console.log("Case courante : "+(seg+1));
+        isBlackOrRed((seg+1));
+        //console.log(wheel.angleCurrent);
+        //console.log("en degré : "+((wheel.angleCurrent*360)/(2*Math.PI)));
+        clearInterval(wheel.timerHandle);
+        wheel.timerHandle = 0;
+        wheel.angleDelta = 0;
 
-        for(var n = 1; n < numWedges+1; n++) {
-            addWedge(n);
-        }
-        //addGreenWedge();
-        pointer = new Konva.Wedge({
-            fillRadialGradientStartPoint: 0,
-            fillRadialGradientStartRadius: 0,
-            fillRadialGradientEndPoint: 0,
-            fillRadialGradientEndRadius: 30,
-            fillRadialGradientColorStops: [0, 'white', 1, 'red'],
-            stroke: 'white',
-            strokeWidth: 2,
-            lineJoin: 'round',
-            angle: 1,
-            radius: 30,
-            x: stage.getWidth() / 2,
-            y: 33,
-            rotation: -90,
-            shadowColor: 'black',
-            shadowOffset: 3,
-            shadowBlur: 2,
-            shadowOpacity: 0.5
-        });
+        //$("#counter").html((wheel.frames / duration * 1000) + " FPS");
+      }
 
-        // add components to the stage
-        layer.add(wheel);
-        layer.add(pointer);
-        stage.add(layer);
+      /*
+      // Display RPM
+      var rpm = (wheel.angleDelta * (1000 / wheel.timerDelay) * 60) / (Math.PI * 2);
+      $("#counter").html( Math.round(rpm) + " RPM" );
+       */
+    },
 
-        // bind events
-        bind();
+    init : function(optionList) {
+      try {
+        //wheel.initWheel();
+        //wheel.initAudio();
+        wheel.initCanvas();
+        //wheel.draw();
 
-        var anim = new Konva.Animation(animate, layer);
+      } catch (exceptionData) {
+        alert('Wheel is not loaded ' + exceptionData);
+      }
 
-        // wait one second and then spin the wheel
-        setTimeout(function() {
-            anim.start();
-        }, 1000);
-    }
-    init();
+    },
+
+    initAudio : function() {
+      var sound = document.createElement('audio');
+      sound.setAttribute('src', 'wheel23.mp3');
+      wheel.sound = sound;
+    },
+
+    initCanvas : function() {
+      var canvas = $('#wheel #canvas').get(0);
+
+      /*if ($.browser.msie) {
+        canvas = document.createElement('canvas');
+        $(canvas).attr('width', 1000).attr('height', 600).attr('id', 'canvas').appendTo('.wheel');
+        canvas = G_vmlCanvasManager.initElement(canvas);
+      }*/
+
+      canvas.addEventListener("click", wheel.spin, false);
+      wheel.canvasContext = canvas.getContext("2d");
+    },
+
+    initWheel : function() {
+      //shuffle(wheel.colors);
+    },
+
+    // Called when segments have changed
+    update : function() {
+      // Ensure we start mid way on a item
+      //var r = Math.floor(Math.random() * wheel.segments.length);
+      var r = 0;
+      wheel.angleCurrent = ((r + 0.5) / wheel.segments.length) * Math.PI * 2;
+
+      var segments = wheel.segments;
+      var len      = segments.length;
+      var colors   = wheel.colors;
+      var colorLen = colors.length;
+
+      // Generate a color cache (so we have consistant coloring)
+      var seg_color = new Array();
+      for (var i = 0; i < len; i++){
+        seg_color.push(colors[i]);
+        //seg_color.push( colors [ segments[i].hashCode().mod(colorLen) ] );
+      }
+
+      wheel.seg_color = seg_color;
+
+      wheel.draw();
+    },
+
+    draw : function() {
+      wheel.clear();
+      wheel.drawWheel();
+      wheel.drawNeedle();
+    },
+
+    clear : function() {
+      var ctx = wheel.canvasContext;
+      ctx.clearRect(0, 0, 1000, 800);
+    },
+
+    drawNeedle : function() {
+      var ctx = wheel.canvasContext;
+      var centerX = wheel.centerX;
+      var centerY = wheel.centerY;
+      var size = wheel.size;
+
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = '#000000';
+      ctx.fileStyle = '#ffffff';
+
+      ctx.beginPath();
+
+      ctx.moveTo(centerX + size - 40, centerY);
+      ctx.lineTo(centerX + size + 20, centerY - 10);
+      ctx.lineTo(centerX + size + 20, centerY + 10);
+      ctx.closePath();
+
+      ctx.stroke();
+      ctx.fill();
+
+      // Which segment is being pointed to?
+      var i = wheel.segments.length - Math.floor((wheel.angleCurrent / (Math.PI * 2)) * wheel.segments.length) - 1;
+
+      // Now draw the winning name
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = '#ffffff';
+      ctx.font = "2em Arial";
+      ctx.fillText("", centerX + size + 25, centerY);
+    },
+
+    drawSegment : function(key, lastAngle, angle) {
+      var ctx = wheel.canvasContext;
+      var centerX = wheel.centerX;
+      var centerY = wheel.centerY;
+      var size = wheel.size;
+
+      var segments = wheel.segments;
+      var len = wheel.segments.length;
+      var colors = wheel.seg_color;
+
+      var value = segments[key];
+      
+      ctx.save();
+      ctx.beginPath();
+
+      // Start in the centre
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, size, lastAngle, angle, false); // Draw a arc around the edge
+      ctx.lineTo(centerX, centerY); // Now draw a line back to the centre
+
+      // Clip anything that follows to this area
+      //ctx.clip(); // It would be best to clip, but we can double performance without it
+      ctx.closePath();
+
+      ctx.fillStyle = colors[key];
+      ctx.fill();
+      ctx.stroke();
+
+      // Now draw the text
+      ctx.save(); // The save ensures this works on Android devices
+      ctx.translate(centerX, centerY);
+      ctx.rotate((lastAngle + angle) / 2);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(value, size / 2 + 20, 0);
+      ctx.restore();
+
+      ctx.restore();
+    },
+
+    drawWheel : function() {
+      var ctx = wheel.canvasContext;
+
+      var angleCurrent = wheel.angleCurrent;
+      var lastAngle    = angleCurrent;
+
+      var segments  = wheel.segments;
+      var len       = wheel.segments.length;
+      var colors    = wheel.colors;
+      var colorsLen = wheel.colors.length;
+
+      var centerX = wheel.centerX;
+      var centerY = wheel.centerY;
+      var size    = wheel.size;
+
+      var PI2 = Math.PI * 2;
+
+      ctx.lineWidth    = 1;
+      ctx.strokeStyle  = '#000000';
+      ctx.textBaseline = "middle";
+      ctx.textAlign    = "center";
+      ctx.font         = "1.4em Arial";
+
+      for (var i = 1; i <= len; i++) {
+        var angle = PI2 * (i / len) + angleCurrent;
+        wheel.drawSegment(i - 1, lastAngle, angle);
+        lastAngle = angle;
+      }
+
+      // Draw a center circle
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 20, 0, PI2, false);
+      ctx.closePath();
+
+      ctx.fillStyle   = '#ffffff';
+      ctx.strokeStyle = '#000000';
+      ctx.fill();
+      ctx.stroke();
+
+      // Draw outer circle
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, size, 0, PI2, false);
+      ctx.closePath();
+
+      ctx.lineWidth   = 10;
+      ctx.strokeStyle = '#000000';
+      ctx.stroke();
+    },
+  }
+
+    wheel.init();
+    wheel.update();
+    console.log(wheel);
+    angleSegment = 2*wheel.angleCurrent;
+    seg = (wheel.angleCurrent/angleSegment)-(wheel.angleCurrent/angleSegment)%1;
+    console.log("Case courante : "+(seg+1));
 
 });

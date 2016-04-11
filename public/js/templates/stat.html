@@ -18,7 +18,7 @@
               <!-- small box -->
               <div class="small-box bg-aqua">
                 <div class="inner">
-                  <h3>{{(stats[0].value/stats[1].value).toPrecision(3)}}<sup style="font-size: 20px">%</sup> K/D</h3>
+                  <h3>{{ratioKillDeath}}<sup style="font-size: 20px">%</sup> K/D</h3>
                   <p>{{stats[0].value}} kills | {{stats[1].value}} deaths</p>
                 </div>
                 <div class="icon">
@@ -31,7 +31,7 @@
               <!-- small box -->
               <div class="small-box bg-green">
                 <div class="inner">
-                  <h3>{{(stats[25].value/stats[0].value).toPrecision(2)*100}}<sup style="font-size: 20px">%</sup> HS</h3> 
+                  <h3>{{ratioHs}}<sup style="font-size: 20px">%</sup> HS</h3> 
                   <p>{{stats[25].value}} heads / {{stats[0].value}} kills</p>
                 </div>
                 <div class="icon">
@@ -44,7 +44,7 @@
               <!-- small box -->
               <div class="small-box bg-yellow">
                 <div class="inner">
-                  <h3>{{(stats[111].value/stats[112].value).toPrecision(2)*100}}<sup style="font-size: 20px">%</sup> P-rounds won</h3>
+                  <h3>{{ratioProunds}}<sup style="font-size: 20px">%</sup> P-rounds won</h3>
                   <p>{{stats[111].value}} / {{stats[112].value}} pistol rounds played</p>
                 </div>
                 <div class="icon">
@@ -57,7 +57,7 @@
               <!-- small box -->
               <div class="small-box bg-red">
                 <div class="inner">
-                  <h3>{{(stats[46].value/stats[47].value).toPrecision(2)*100}}<sup style="font-size: 20px">%</sup> Hits/Fired</h3>
+                  <h3>{{ratioPrecision}}<sup style="font-size: 20px">%</sup> Hits/Fired</h3>
                   <p>{{stats[46].value}} hits / {{stats[47].value}} fired</p>
                 </div>
                 <div class="icon">
@@ -168,9 +168,9 @@
                   <h5 class="widget-user-desc">Hits/Shots</h5>
                 </div>
                 <div class="box-footer no-padding">
-                  <ul class="nav nav-stacked" style="max-height: 480px;overflow: scroll;">
-                    <li ng-repeat="weapon in weaponsRatio | orderBy:'-value'"><a ui-sref="stat"><img src="images/weapons/basics/{{weapon.name}}.png" height="50px" width="70px"/>&nbsp;&nbsp;{{weapon.name}} <span class="pull-right badge bg-blue">{{weapon.value}} %</span></a></li>
-                  </ul>
+                    <ul class="nav nav-stacked" style="max-height: 480px;overflow: scroll;">
+                      <li ng-repeat="weapon in weaponsRatio | orderBy:'-value'"><a ui-sref="stat"><img src="images/weapons/basics/{{weapon.name}}.png" height="50px" width="70px"/>&nbsp;&nbsp;{{weapon.name}} <span class="pull-right badge bg-blue">{{weapon.value}} %</span></a></li>
+                    </ul>
                 </div>
               </div>
             </div>

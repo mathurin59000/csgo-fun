@@ -16,6 +16,10 @@ App.controller("StatController", function($scope, $http, Auth) {
 	  $scope.enemiesBlinded;
 	  $scope.windowsBroken;
 	  $scope.killsAgainstSniper;
+	  $scope.ratioKillDeath;
+	  $scope.ratioHs;
+	  $scope.ratioProunds;
+	  $scope.ratioPrecision;
 
 	  	$http({
 		  method: 'GET',
@@ -23,7 +27,11 @@ App.controller("StatController", function($scope, $http, Auth) {
 		}).then(function successCallback(response) {
 			$scope.stats = response.data.playerstats.stats;
 			$scope.achievements = response.data.playerstats.achievements;
-
+			console.log($scope.stats);
+			getRatioKillDeath();
+			getRatioHs();
+			getRatioProunds();
+			getRatioPrecision();
 			getWeaponsKillList();
 			getRatioVictory();
 			getMapsRatioList();
@@ -66,8 +74,24 @@ App.controller("StatController", function($scope, $http, Auth) {
 		}
 	}
 
+	function getRatioKillDeath(){
+		$scope.ratioKillDeath = roundDecimal(($scope.stats[0].value/$scope.stats[1].value), 2);
+	}
+
+	function getRatioHs(){
+		$scope.ratioHs = roundDecimal(($scope.stats[25].value/$scope.stats[0].value), 0)*100;
+	}
+
 	function getRatioVictory(){
-		$scope.ratioVictory = (($scope.stats[127].value/$scope.stats[128].value)*100).toPrecision(2);
+		$scope.ratioVictory = roundDecimal((($scope.stats[127].value/$scope.stats[128].value)*100), 2);
+	}
+
+	function getRatioProunds(){
+		$scope.ratioProunds = roundDecimal(($scope.stats[111].value/$scope.stats[112].value), 0)*100;
+	}
+
+	function getRatioPrecision(){
+		$scope.ratioPrecision = roundDecimal(($scope.stats[46].value/$scope.stats[47].value), 0)*100;
 	}
 
 	function getWeaponsPrecisionList(){
@@ -77,7 +101,7 @@ App.controller("StatController", function($scope, $http, Auth) {
 				value: 0
 			};
 			item.name = $scope.stats[i].name.split('_')[2];
-			item.value = ($scope.stats[i+14].value/$scope.stats[i].value).toPrecision(2)*100;
+			item.value = roundDecimal(($scope.stats[i+14].value/$scope.stats[i].value), 0)*100;
 			$scope.weaponsRatio.push(item);
 		}
 		var item1 = {
@@ -85,28 +109,28 @@ App.controller("StatController", function($scope, $http, Auth) {
 			value: 0
 		};
 		item1.name = $scope.stats[137].name.split('_')[2];
-		item1.value = ($scope.stats[138].value/$scope.stats[137].value).toPrecision(2)*100;
+		item1.value = roundDecimal(($scope.stats[138].value/$scope.stats[137].value), 0)*100;
 		$scope.weaponsRatio.push(item1);
 		var item2 = {
 			name: '',
 			value: 0
 		};
 		item2.name = $scope.stats[139].name.split('_')[2];
-		item2.value = ($scope.stats[139].value/$scope.stats[141].value).toPrecision(2)*100;
+		item2.value = roundDecimal(($scope.stats[139].value/$scope.stats[141].value), 0)*100;
 		$scope.weaponsRatio.push(item2);
 		var item3 = {
 			name: '',
 			value: 0
 		};
 		item3.name = $scope.stats[143].name.split('_')[2];
-		item3.value = ($scope.stats[144].value/$scope.stats[143].value).toPrecision(2)*100;
+		item3.value = roundDecimal(($scope.stats[144].value/$scope.stats[143].value), 0)*100;
 		$scope.weaponsRatio.push(item3);
 		var item4 = {
 			name: '',
 			value: 0
 		};
 		item4.name = $scope.stats[145].name.split('_')[2];
-		item4.value = ($scope.stats[145].value/$scope.stats[147].value).toPrecision(2)*100;
+		item4.value = roundDecimal(($scope.stats[145].value/$scope.stats[147].value), 0)*100;
 		$scope.weaponsRatio.push(item4);
 		//sg
 		var item5 = {
@@ -114,7 +138,7 @@ App.controller("StatController", function($scope, $http, Auth) {
 			value: 0
 		};
 		item5.name = $scope.stats[148].name.split('_')[2];
-		item5.value = ($scope.stats[149].value/$scope.stats[148].value).toPrecision(2)*100;
+		item5.value = roundDecimal(($scope.stats[149].value/$scope.stats[148].value), 0)*100;
 		$scope.weaponsRatio.push(item5);
 		//mp7
 		var item6 = {
@@ -122,7 +146,7 @@ App.controller("StatController", function($scope, $http, Auth) {
 			value: 0
 		};
 		item6.name = $scope.stats[151].name.split('_')[2];
-		item6.value = ($scope.stats[152].value/$scope.stats[151].value).toPrecision(2)*100;
+		item6.value = roundDecimal(($scope.stats[152].value/$scope.stats[151].value), 0)*100;
 		$scope.weaponsRatio.push(item6);
 		//mp9
 		var item7 = {
@@ -130,56 +154,56 @@ App.controller("StatController", function($scope, $http, Auth) {
 			value: 0
 		};
 		item7.name = $scope.stats[155].name.split('_')[2];
-		item7.value = ($scope.stats[156].value/$scope.stats[155].value).toPrecision(2)*100;
+		item7.value = roundDecimal(($scope.stats[156].value/$scope.stats[155].value), 0)*100;
 		$scope.weaponsRatio.push(item7);
 		var item8 = {
 			name: '',
 			value: 0
 		};
 		item8.name = $scope.stats[157].name.split('_')[2];
-		item8.value = ($scope.stats[157].value/$scope.stats[159].value).toPrecision(2)*100;
+		item8.value = roundDecimal(($scope.stats[157].value/$scope.stats[159].value), 0)*100;
 		$scope.weaponsRatio.push(item8);
 		var item9 = {
 			name: '',
 			value: 0
 		};
 		item9.name = $scope.stats[160].name.split('_')[2];
-		item9.value = ($scope.stats[160].value/$scope.stats[162].value).toPrecision(2)*100;
+		item9.value = roundDecimal(($scope.stats[160].value/$scope.stats[162].value), 0)*100;
 		$scope.weaponsRatio.push(item9);
 		var item10 = {
 			name: '',
 			value: 0
 		};
 		item10.name = $scope.stats[163].name.split('_')[2];
-		item10.value = ($scope.stats[164].value/$scope.stats[163].value).toPrecision(2)*100;
+		item10.value = roundDecimal(($scope.stats[164].value/$scope.stats[163].value), 0)*100;
 		$scope.weaponsRatio.push(item10);
 		var item11 = {
 			name: '',
 			value: 0
 		};
 		item11.name = $scope.stats[170].name.split('_')[2];
-		item11.value = ($scope.stats[171].value/$scope.stats[170].value).toPrecision(2)*100;
+		item11.value = roundDecimal(($scope.stats[171].value/$scope.stats[170].value), 0)*100;
 		$scope.weaponsRatio.push(item11);
 		var item12 = {
 			name: '',
 			value: 0
 		};
 		item12.name = $scope.stats[172].name.split('_')[2];
-		item12.value = ($scope.stats[173].value/$scope.stats[172].value).toPrecision(2)*100;
+		item12.value = roundDecimal(($scope.stats[173].value/$scope.stats[172].value), 0)*100;
 		$scope.weaponsRatio.push(item12);
 		var item13 = {
 			name: '',
 			value: 0
 		};
 		item13.name = $scope.stats[182].name.split('_')[2];
-		item13.value = ($scope.stats[185].value/$scope.stats[182].value).toPrecision(2)*100;
+		item13.value = roundDecimal(($scope.stats[185].value/$scope.stats[182].value), 0)*100;
 		$scope.weaponsRatio.push(item13);
 		var item14 = {
 			name: '',
 			value: 0
 		};
 		item14.name = $scope.stats[183].name.split('_')[2];
-		item14.value = ($scope.stats[186].value/$scope.stats[183].value).toPrecision(2)*100;
+		item14.value = roundDecimal(($scope.stats[186].value/$scope.stats[183].value), 0)*100;
 		$scope.weaponsRatio.push(item14);
 	}
 
@@ -210,6 +234,12 @@ App.controller("StatController", function($scope, $http, Auth) {
 		for (var i = 0; i < $scope.mapsRatio.length; i++) {
 			$scope.mapsRatio[i].name = $scope.mapsRatio[i].name.split('_')[4];
 		}
+	}
+
+	function roundDecimal(nombre, precision){
+	    var precision = precision || 2;
+	    var tmp = Math.pow(10, precision);
+	    return Math.round( nombre*tmp )/tmp;
 	}
 
 
