@@ -267,6 +267,11 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	    }
 	  });
 
+	  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
     $scope.youtube = function (id, title) {
       VideosService.launchPlayer(id, title);
       console.log('Launched id:' + id + ' and title:' + title);
