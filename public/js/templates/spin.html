@@ -11,7 +11,8 @@
 		</div>
 			<div class="box box-info">
 				<div class="box-header with-border">
-		          <h3 class="box-title">Balance <h3 ng-show="balance">: {{balance}}</h3></h3>
+		          <h3 class="box-title" ng-hide="balance">Balance</h3>
+		          <h3 class="box-title" ng-show="balance">Balance : {{balance}}</h3>
 		        </div>
 				<form role="form">
 		          <div class="box-body">

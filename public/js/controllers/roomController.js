@@ -30,7 +30,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	console.log($scope.clientsNumber);
 	  	if($scope.urls.length>0){
 	  		setTimeout(function(){ 
-		     $scope.youtubeCurrentTime($scope.urls[0].url, $scope.urls[0].url, currentTimeVideo);
+		     $scope.youtubeCurrentTime($scope.urls[0].url, $scope.urls[0].title, currentTimeVideo);
 		  }, 2000);	
 	  	}
 	  	$scope.$apply();
@@ -47,8 +47,8 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  				console.log("index==0");
 	  				$scope.urls.splice(index, 1);
 	  				if($scope.urls.length>0&&$scope.urls[0].id==id){
-	  					socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].url, $scope.urls[0].photo);
-	  					$scope.youtube($scope.urls[0].url, $scope.urls[0].username);
+	  					socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
+	  					$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
 	  				}
 	  				return true;
 	  			}
@@ -64,32 +64,33 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  .on('error', function(error){
 	  	alert('error Websocket : '+error);
 	  })
-	  .on('addUrl', function(id, username, url, photo, time){
+	  .on('addUrl', function(id, username, title, url, photo, time){
 	  	var item = {
 	  		id: id,
 	  		username: username,
+	  		title: title,
 	  		url: url,
 	  		photo: photo,
 	  		time: time
 	  	};
 	  	$scope.urls.push(item);
 	  	if($scope.urls.length==1){
-			$scope.youtube(item.url, item.username);
+			$scope.youtube(item.url, item.title);
 		}
 	  	$scope.$apply();
 	  })
-	  .on('receivePlayVideo', function(id, username, url, photo){
+	  .on('receivePlayVideo', function(id, username, title, url, photo){
 	  	if($scope.urls.length>0&&$scope.urls[0].id==id){
-	  		$scope.youtube($scope.urls[0].url, $scope.urls[0].username);
+	  		$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
 	  	}
 	  })
 	  .on('removeUrl', function(id, username, url, photo){
 	  	if($scope.urls[0].id==id&&$scope.urls[0].url==url){
 	  		$scope.urls.shift();
 	  		if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
-	  			socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].url, $scope.urls[0].photo);
+	  			socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
 	  			resetLikes();
-	  			$scope.youtube($scope.urls[0].url, $scope.urls[0].username);
+	  			$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
 	  			repeatSetCurrentTime();
 	  		}
 	  	}
@@ -111,7 +112,6 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	}
 	  })
 	  .on('message', function(id, username, message, photo, time){
-	  	console.log('event: message');
 	  	var item = {
 	  		id: id,
 	  		username: username,
@@ -142,17 +142,19 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 
 	  $scope.sendUrl = function(item){
   			if(!userAlreadySentUrl()){
-  				socketChat.emit('writeUrl', $scope.user.id, $scope.user.displayName, item.id.videoId, $scope.user.photos[0].value);
+  				$log.info(item);
+  				socketChat.emit('writeUrl', $scope.user.id, $scope.user.displayName, item.snippet.title, item.id.videoId, $scope.user.photos[0].value);
 	  			var item = {
 	  				id: $scope.user.id,
 	  				username: $scope.user.displayName,
+	  				title: item.snippet.title,
 	  				url: item.id.videoId,
 	  				photo: $scope.user.photos[0].value,
 	  				time: Date.now()
 	  			};
 	  			$scope.urls.push(item);
 	  			if($scope.urls.length==1){
-	  				$scope.youtube(item.url, item.username);
+	  				$scope.youtube(item.url, item.title);
 	  				repeatSetCurrentTime();
 	  			}
   			}
@@ -260,7 +262,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	    			$scope.playerStatus = "STOP";
 	    			if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
 	    				resetLikes();
-	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].url, $scope.urls[0].photo);
+	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
 	    				$scope.urls.shift();
 	    			}
 	    			break;
@@ -271,7 +273,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	    			$scope.playerStatus = "PAUSE";
 	    			if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
 	    				resetLikes();
-	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].url, $scope.urls[0].photo);
+	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
 	    				$scope.urls.shift();
 	    			}
 	    			break;
@@ -302,6 +304,11 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
     $scope.mute=false;
     $scope.nextPageToken = '';
     $scope.label = 'You haven\'t searched for any video yet!';
+    $scope.slider=50;
+
+    $scope.$watch('slider', function(value){
+    	VideosService.setVolume(value);
+    });
 
     $scope.addMute = function(){
     	if($scope.mute){

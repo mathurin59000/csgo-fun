@@ -80,6 +80,8 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
     youtube.player.loadVideoById(id);
     youtube.videoId = id;
     youtube.videoTitle = title;
+    $log.info('Duration :');
+    console.log(youtube.player.getDuration());
     return youtube;
   };
 

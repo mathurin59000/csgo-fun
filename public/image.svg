@@ -1,0 +1,23 @@
+<svg width="580" height="400" xmlns="http://www.w3.org/2000/svg">
+ <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+ <g>
+  <title>background</title>
+  <rect fill="#fff" id="canvas_background" height="402" width="582" y="-1" x="-1"/>
+  <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+   <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+  </g>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <ellipse ry="42" rx="37.5" id="svg_1" cy="117.5" cx="254" stroke-width="1.5" stroke="#000" fill="#fff"/>
+  <ellipse ry="61.5" rx="31.5" id="svg_3" cy="223" cx="254" stroke-width="1.5" stroke="#000" fill="#fff"/>
+  <line stroke-linecap="null" stroke-linejoin="null" id="svg_4" y2="239.5" x2="186.5" y1="194.5" x1="225.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="none"/>
+  <line stroke-linecap="null" stroke-linejoin="null" id="svg_5" y2="234.5" x2="316.5" y1="194.5" x1="282.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="none"/>
+  <line stroke-linecap="null" stroke-linejoin="null" id="svg_6" y2="333.5" x2="209.5" y1="279.5" x1="240.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="none"/>
+  <line stroke-linecap="null" stroke-linejoin="null" id="svg_7" y2="333.5" x2="296.5" y1="277.5" x1="272.5" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="none"/>
+  <ellipse stroke="#000" ry="6" rx="8.5" id="svg_8" cy="105.5" cx="242" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#fff"/>
+  <ellipse stroke="#000" ry="6.5" rx="8.5" id="svg_9" cy="106" cx="266" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" fill="#fff"/>
+  <path d="m237.5,135.5c0,0 -0.707108,0.292892 0,1c0.707108,0.707108 1.292892,0.292892 2,1c0.707108,0.707108 0.292892,1.292892 1,2c0.707108,0.707108 1.693436,0.458801 3,1c0.923874,0.38269 1,1 2,1c1,0 1.292892,0.292892 2,1c0.707108,0.707108 1,1 2,1c1,0 1,1 2,1c1,0 2,0 3,0c1,0 1.292892,-0.292892 2,-1c0.707092,-0.707108 1.292908,-0.292892 2,-1c0.707092,-0.707108 2,0 3,0c1,0 1.693451,-0.458801 3,-1c0.923889,-0.38269 0.693451,-1.458801 2,-2c0.923889,-0.38269 1.292908,-0.292892 2,-1c0.707092,-0.707108 0.292908,-1.292892 1,-2c0.707092,-0.707108 1,-2 2,-3l1,0l1,0l0,-1" id="svg_10" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="none"/>
+  <path d="m241.5,102.5c-241.5,-102.5 -241.5,-102.5 -241.5,-102.5l241.5,102.5l0,0l0,1" id="svg_11" fill-opacity="null" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="none"/>
+ </g>
+</svg>

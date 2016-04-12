@@ -1,12 +1,67 @@
-App.controller("DepositController", function($scope) {
+App.controller("DepositController", function($scope, Auth) {
 
 	  $scope.helloTo = {};
 	  $scope.helloTo.title = "AngularJS";
 	  $scope.chat = [];
+    $scope.balance = 500;
+    $scope.user = JSON.parse(Auth.isAuthenticated());
 
 	/**********************************************
 					Websocket
 	**********************************************/
+
+  /*var socketSpin = io.connect(window.location.protocol+"//"+window.location.host+"/spin");
+
+  socketSpin.on('connect', function(){
+      socketSpin.emit('user', $scope.user.id, $scope.user.displayName, $scope.user.photos[0].value);
+    })
+    .on('join', function(id, username, message, photo, urls, time, clientsNumber, currentTimeVideo){
+      var item = {
+        id: id,
+        username: username,
+        message: message,
+        photo: photo,
+        time: time
+      };
+      $scope.chat.push(item);
+      $scope.$apply();
+    })
+    .on('bye', function(message){
+      console.log("Dans le bye !!! (spin)");
+      console.log(message);
+    })
+    .on('error', function(error){
+      alert('error Websocket : '+error);
+    })
+    .on('message', function(id, username, message, photo, time){
+      console.log('event: message');
+      var item = {
+        id: id,
+        username: username,
+        message: message,
+        photo: photo,
+        time: time
+      };
+      $scope.chat.push(item);
+      $scope.$apply();
+    });
+
+    $scope.sendMessage = function(){
+      if($scope.newMessage&&typeof($scope.newMessage)!=undefined){
+        if($scope.newMessage.length>0){
+          socketChat.emit('writeMessage', $scope.user.id, $scope.user.displayName, $scope.newMessage, $scope.user.photos[0].value);
+          var item = {
+            id: $scope.user.id,
+            username: $scope.user.displayName,
+            message: $scope.newMessage,
+            photo: $scope.user.photos[0].value,
+            time: Date.now()
+          };
+          $scope.chat.push(item);
+          $scope.newMessage = "";
+        }
+      }
+    };*/
 
 
 	/**********************************************

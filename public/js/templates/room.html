@@ -85,10 +85,20 @@
 		<div id="player">
 	      <div id="placeholder" style="width: 100%"></div>
 	    </div>
-	    <button class="btn btn-sm btn-primary" ng-click="addMute()"><i class="fa fa-volume-up" ng-hide="mute"></i><i class="fa fa-volume-off" ng-show="mute"></i></button>
+	    <div class="btn-group">
+          <button type="button" class="btn btn-sm btn-info" ng-click="addMute()"><i class="fa fa-volume-up" ng-hide="mute"></i><i class="fa fa-volume-off" ng-show="mute"></i></button>
+          <button type="button" class="btn btn-sm btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><div style="padding-left: 10%;padding-right: 10%;"><input type="range" ng-model="slider" min="0" max="100"></div></li>
+          </ul>
+        </div>
 		<button class="btn btn-sm btn-success" ng-click="addVote('+1')"><i class="fa fa-thumbs-up"></i> +1</button>
         <button class="btn btn-sm btn-danger" ng-click="addVote('-1')"><i class="fa fa-thumbs-down"></i> -1</button>
         <span class="label label-warning">{{likes.length}} : {{unlikes.length}}</span>
+        <h4 ng-show="urls.length>0">Title : {{urls[0].title}}</h4>
         <p><i class="fa fa-youtube-play"></i> Player status is: {{playerStatus}}</p>
 	</section><!-- /.Left col -->
 
