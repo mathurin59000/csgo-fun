@@ -16,7 +16,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  socketChat.on('connect', function(){
 	  	socketChat.emit('user', $scope.user.id, $scope.user.displayName, $scope.user.photos[0].value);
 	  })
-	  .on('join', function(id, username, message, photo, urls, time, clientsNumber){
+	  .on('join', function(id, username, message, photo, urls, time, clientsNumber, currentTimeVideo){
 	  	var item = {
 	  		id: id,
 	  		username: username,
@@ -30,7 +30,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	console.log($scope.clientsNumber);
 	  	if($scope.urls.length>0){
 	  		setTimeout(function(){ 
-		     $scope.youtube($scope.urls[0].url, $scope.urls[0].url);
+		     $scope.youtubeCurrentTime($scope.urls[0].url, $scope.urls[0].url, currentTimeVideo);
 		  }, 2000);	
 	  	}
 	  	$scope.$apply();
@@ -43,8 +43,6 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	console.log("Dans le bye !!!");
 	  	if($scope.urls.length>0){
 	  		$scope.urls.some(function name(element, index, array){
-	  			console.log(id);
-	  			console.log(element.id);
 	  			if(element.id==id&&index==0){
 	  				console.log("index==0");
 	  				$scope.urls.splice(index, 1);
@@ -92,6 +90,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  			socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].url, $scope.urls[0].photo);
 	  			resetLikes();
 	  			$scope.youtube($scope.urls[0].url, $scope.urls[0].username);
+	  			repeatSetCurrentTime();
 	  		}
 	  	}
 	  })
@@ -154,11 +153,21 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  			$scope.urls.push(item);
 	  			if($scope.urls.length==1){
 	  				$scope.youtube(item.url, item.username);
+	  				repeatSetCurrentTime();
 	  			}
   			}
   			else{
   				alert("You're in the queue already...");
   			}
+	  };
+
+	  function repeatSetCurrentTime(){
+	  	setTimeout(function(){
+			socketChat.emit('setCurrentTime', VideosService.getCurrentTime());
+			if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
+				repeatSetCurrentTime();
+			}
+		}, 2000);
 	  };
 
 	  $scope.addVote = function(vote){
@@ -285,6 +294,10 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
       console.log('Launched id:' + id + ' and title:' + title);
     };
 
+    $scope.youtubeCurrentTime = function (id, title, time) {
+      VideosService.launchPlayerCurrentTime(id, title, time);
+      console.log('Launched id:' + id + ' and title:' + title);
+    };
 
     $scope.mute=false;
     $scope.nextPageToken = '';

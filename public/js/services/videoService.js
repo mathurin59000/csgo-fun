@@ -68,20 +68,27 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
   function onPlayerReady(event) {
     //event.target.playVideo();
     //console.log(event);
-  }
+  };
 
   function onPlayerStateChange(event) {
     //console.log(event.data);
     youtube.status = event.data;
     $rootScope.$apply();
-  }
+  };
 
   this.launchPlayer = function (id, title) {
     youtube.player.loadVideoById(id);
     youtube.videoId = id;
     youtube.videoTitle = title;
     return youtube;
-  }
+  };
+
+  this.launchPlayerCurrentTime = function(id, title, time){
+      youtube.player.loadVideoById(id, time, "large");
+      youtube.videoId = id;
+      youtube.videoTitle = title;
+      return youtube;
+  };
 
   this.listResults = function (data, append) {
     if (!append) {
@@ -97,7 +104,7 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
       });
     }
     return results;
-  }
+  };
 
   this.archiveVideo = function (video) {
     history.unshift(video);
@@ -114,6 +121,10 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
 
   this.setVolume = function(volume){
     youtube.player.setVolume(volume);
+  };
+
+  this.getCurrentTime = function() {
+    return youtube.player.getCurrentTime();
   };
 
   this.getYoutube = function () {

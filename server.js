@@ -19,6 +19,7 @@ var backpackApiKey = '56f5373dc440454b3b63a179';
 var marketPrices;
 var urls=[];
 var allClients=[];
+var currentTimeVideo = 0;
 
 /******************************************************
                   Configuration
@@ -76,8 +77,8 @@ var prod = 'https://csgo-fun.herokuapp.com/'
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new SteamStrategy({
-    returnURL: 'https://csgo-fun.herokuapp.com/auth/steam/return',
-    realm: 'https://csgo-fun.herokuapp.com/',
+    returnURL: 'http://localhost:8080/auth/steam/return',
+    realm: 'http://localhost:8080/',
     apiKey: '336F47CADE44154B12B320F6F6B4AA02'
   },
   function(identifier, profile, done) {
@@ -320,7 +321,12 @@ io.on('connection', function(socket){
       'id': id
     };
     allClients.push(item);
-    socket.emit('join', id, username, ' is connecting to the chat !', photo, urls, Date.now(), allClients.length);
+    if(urls.length>0){
+      socket.emit('join', id, username, ' is connecting to the chat !', photo, urls, Date.now(), allClients.length, currentTimeVideo);
+    }
+    else{
+      socket.emit('join', id, username, ' is connecting to the chat !', photo, urls, Date.now(), allClients.length, currentTimeVideo);
+    }
     socket.broadcast.emit('otherJoin', allClients.length);
   });
 
@@ -340,6 +346,10 @@ io.on('connection', function(socket){
         }
       });
       socket.broadcast.emit('bye', id);
+  });
+
+  socket.on('setCurrentTime', function(time){
+    currentTimeVideo = time;
   });
 
   socket.on('writeVote', function(id, username, vote){
