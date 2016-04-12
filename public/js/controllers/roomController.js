@@ -16,7 +16,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  socketChat.on('connect', function(){
 	  	socketChat.emit('user', $scope.user.id, $scope.user.displayName, $scope.user.photos[0].value);
 	  })
-	  .on('join', function(id, username, message, photo, urls, time){
+	  .on('join', function(id, username, message, photo, urls, time, clientsNumber){
 	  	var item = {
 	  		id: id,
 	  		username: username,
@@ -26,6 +26,8 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	};
 	  	$scope.urls = urls;
 	  	$scope.chat.push(item);
+	  	$scope.clientsNumber = clientsNumber;
+	  	console.log($scope.clientsNumber);
 	  	if($scope.urls.length>0){
 	  		setTimeout(function(){ 
 		     $scope.youtube($scope.urls[0].url, $scope.urls[0].url);
@@ -33,10 +35,13 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	}
 	  	$scope.$apply();
 	  })
+	  .on('otherJoin', function(clientsNumber){
+	  	$scope.clientsNumber = clientsNumber;
+	  	$scope.$apply();
+	  })
 	  .on('bye', function(id){
 	  	console.log("Dans le bye !!!");
 	  	if($scope.urls.length>0){
-	  		console.log("ok1");
 	  		$scope.urls.some(function name(element, index, array){
 	  			console.log(id);
 	  			console.log(element.id);
@@ -85,13 +90,16 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  		$scope.urls.shift();
 	  		if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
 	  			socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].url, $scope.urls[0].photo);
+	  			resetLikes();
 	  			$scope.youtube($scope.urls[0].url, $scope.urls[0].username);
 	  		}
 	  	}
 	  })
-	  .on('vote', function(username, vote, time){
+	  .on('vote', function(id, username, vote, time){
 	  	var item = {
+	  		id: id,
 	  		username: username,
+	  		vote: vote,
 	  		time: time
 	  	};
 	  	if(vote=="+1"){
@@ -147,38 +155,42 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  			if($scope.urls.length==1){
 	  				$scope.youtube(item.url, item.username);
 	  			}
-	  			console.log($scope.urls);
   			}
   			else{
-  				console.log("this user has send an url already");
-  				alert("not posible !");
+  				alert("You're in the queue already...");
   			}
 	  };
 
 	  $scope.addVote = function(vote){
-	  	var has_voted = getVoteRight();
-	  	if(!has_voted){
-	  		if(vote=="+1"){
-		  		socketChat.emit('writeVote', $scope.user.displayName, vote);
-		  		var item = {
-	  				username: $scope.user.displayName,
-	  				time: Date.now()
-	  			};
-		  		$scope.likes.push(item);
-		  		$scope.$apply();
+	  	if($scope.urls.length>0){
+	  		var has_voted = getVoteRight();
+		  	if(!has_voted){
+		  		if(vote=="+1"){
+			  		socketChat.emit('writeVote', $scope.user.id, $scope.user.displayName, vote);
+			  		var item = {
+			  			id: $scope.user.id,
+		  				username: $scope.user.displayName,
+		  				vote: vote,
+		  				time: Date.now()
+		  			};
+			  		$scope.likes.push(item);
+			  		$scope.$apply();
+			  	}
+			  	else if(vote=="-1"){
+			  		socketChat.emit('writeVote', $scope.user.id, $scope.user.displayName, vote);
+			  		var item = {
+			  			id: $scope.user.id,
+		  				username: $scope.user.displayName,
+		  				vote: vote,
+		  				time: Date.now()
+		  			};
+		  			$scope.unlikes.push(item);
+		  			$scope.$apply();
+			  	}
 		  	}
-		  	else if(vote=="-1"){
-		  		socketChat.emit('writeVote', $scope.user.displayName, vote);
-		  		var item = {
-	  				username: $scope.user.displayName,
-	  				time: Date.now()
-	  			};
-	  			$scope.unlikes.push(item);
-	  			$scope.$apply();
+		  	else{
+		  		console.log('already voted...');
 		  	}
-	  	}
-	  	else{
-	  		console.log('already voted...');
 	  	}
 	  };
 
@@ -219,25 +231,6 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	$scope.unlikes = [];
 	  }
 
-	  function getUrlMinify(url){
-	  	var urlMinify;
-	  	if(typeof url == "string"){
-	  		if (url.indexOf('youtube')>0) {
-	          if(url.indexOf('v=')>0){
-	            var tab = url.split('v=');
-	            if(tab[1].indexOf("&")){
-	              var tab2 = tab[1].split('&');
-	              urlMinify=tab2[0];
-	            }
-	            else{
-	              urlMinify = tab[1];
-	            }
-	            return urlMinify;
-	          }
-	        }
-	  	}
-	  }
-
 	  $scope.service = VideosService;
 	  $scope.$watch('service.getPlayer()', function(newVal) {
 	    console.log("New Player", newVal);
@@ -247,30 +240,45 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	    console.log("New VideoId", newVal);
 	  });
 
+	  $scope.playerStatus;
+
 	  $scope.$watch('service.getEvent()', function(newVal) {
 	    switch(newVal){
-	    	case -1:console.log("non démarré");
+	    	case -1:console.log("not started");
+	    			$scope.playerStatus = "non démarré";
 	    			break;
-	    	case 0:console.log("stoppé");
+	    	case 0:console.log("stop");
+	    			$scope.playerStatus = "STOP";
 	    			if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
+	    				resetLikes();
 	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].url, $scope.urls[0].photo);
 	    				$scope.urls.shift();
 	    			}
 	    			break;
-	    	case 1:console.log("lecture");
+	    	case 1:console.log("play");
+	    			$scope.playerStatus = "PLAY";
 	    			break;
 	    	case 2:console.log("pause");
+	    			$scope.playerStatus = "PAUSE";
+	    			if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
+	    				resetLikes();
+	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].url, $scope.urls[0].photo);
+	    				$scope.urls.shift();
+	    			}
 	    			break;
-	    	case 3:console.log("chargement...");
+	    	case 3:console.log("loading...");
+	    			$scope.playerStatus = "LOADING";
 	    			break;
-	    	case 5:console.log("file d'attente");
+	    	case 5:console.log("waiting list");
+	    			$scope.playerStatus = "WAITING LIST";
+	    			break;
 	    }
 	  });
 
 	  var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+	  tag.src = "https://www.youtube.com/iframe_api";
+	  var firstScriptTag = document.getElementsByTagName('script')[0];
+	  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
     $scope.youtube = function (id, title) {
       VideosService.launchPlayer(id, title);
@@ -278,13 +286,22 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
     };
 
 
-
+    $scope.mute=false;
     $scope.nextPageToken = '';
     $scope.label = 'You haven\'t searched for any video yet!';
-    $scope.loading = false;
+
+    $scope.addMute = function(){
+    	if($scope.mute){
+    		VideosService.unMute();
+    		$scope.mute=false;
+    	}
+    	else{
+    		VideosService.mute();
+    		$scope.mute=true;
+    	}
+    };
 
     $scope.search = function (isNewQuery) {
-      $scope.loading = true;
       $http.get('https://www.googleapis.com/youtube/v3/search', {
         params: {
           key: 'AIzaSyD0WtrkfGnp0t2j91c74nWnUo1h8QIq0Ng',
@@ -312,9 +329,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
       .finally( function () {
         $scope.loadMoreButton.stopSpin();
         $scope.loadMoreButton.setDisabled(false);
-        $scope.loading = false;
-      })
-      ;
+      });
     };
 
 });

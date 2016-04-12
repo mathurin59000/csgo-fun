@@ -58,11 +58,6 @@ App.config(function($stateProvider, $urlRouterProvider) {
         
 });
 
-App.run(function () {
-  
-  console.log("App.run ended");
-});
-
 App.constant('YT_event', {
     STOP:            0, 
     PLAY:            1,

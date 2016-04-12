@@ -27,12 +27,6 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
     $rootScope.$apply();
   };
 
-  /*setTimeout(function(){ 
-     youtube.player.loadVideoById("bHQqvYy5KYo", 0, "large");
-     youtube.videoId = "bHQqvYy5KYo";
-     //$log.info(youtube);
-  }, 15000);*/
-
   this.bindPlayer = function (elementId) {
     $log.info('Binding to ' + elementId);
     youtube.playerId = elementId;
@@ -50,7 +44,14 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
       playerVars: {
         rel: 0,
         showinfo: 0,
-        controls: 0
+        controls: 0,
+        fs: 0,
+        loop: 0,
+        showinfo: 0,
+        modestbranding: 1,
+        iv_load_policy: 3,
+        disablekb: 1,
+        autohide: 2
       }
     });
   };
@@ -101,6 +102,18 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
   this.archiveVideo = function (video) {
     history.unshift(video);
     return history;
+  };
+
+  this.mute = function(){
+    youtube.player.mute();
+  };
+
+  this.unMute = function(){
+    youtube.player.unMute();
+  };
+
+  this.setVolume = function(volume){
+    youtube.player.setVolume(volume);
   };
 
   this.getYoutube = function () {

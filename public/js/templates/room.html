@@ -47,7 +47,7 @@
 		  <div class="box box-success">
 		    <div class="box-header">
 		      <i class="fa fa-comments-o"></i>
-		      <h3 class="box-title">Dj's</h3>
+		      <h3 class="box-title">Dj's ({{urls.length}})</h3>
 		    </div>
 		    <div class="box-body chat">
 		      <!-- chat item -->
@@ -59,7 +59,7 @@
 			            <!--<small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{item.time}}&nbsp;</small>-->
 			            {{item.username}}
 			          </a>
-			          {{item.url}}
+			          <!--{{item.url}}-->
 			        </p>
 			      </div><!-- /.item -->
 			  </div>
@@ -85,10 +85,11 @@
 		<div id="player">
 	      <div id="placeholder" style="width: 100%"></div>
 	    </div>
-		<button class="btn btn-default btn-sm btn-success" ng-click="addVote('+1')"><i class="fa fa-thumbs-up"></i> +1</button>
-        <button class="btn btn-default btn-sm btn-danger" ng-click="addVote('-1')"><i class="fa fa-thumbs-down"></i> -1</button>
+	    <button class="btn btn-sm btn-primary" ng-click="addMute()"><i class="fa fa-volume-up" ng-hide="mute"></i><i class="fa fa-volume-off" ng-show="mute"></i></button>
+		<button class="btn btn-sm btn-success" ng-click="addVote('+1')"><i class="fa fa-thumbs-up"></i> +1</button>
+        <button class="btn btn-sm btn-danger" ng-click="addVote('-1')"><i class="fa fa-thumbs-down"></i> -1</button>
         <span class="label label-warning">{{likes.length}} : {{unlikes.length}}</span>
-        <p><i class="fa fa-youtube-play"></i> Player status is: </p>
+        <p><i class="fa fa-youtube-play"></i> Player status is: {{playerStatus}}</p>
 	</section><!-- /.Left col -->
 
 	<section class="col-lg-3 connectedSortable">
@@ -96,7 +97,7 @@
 	  <div class="box box-success">
 	    <div class="box-header">
 	      <i class="fa fa-comments-o"></i>
-	      <h3 class="box-title">Chat</h3>
+	      <h3 class="box-title">Chat ({{clientsNumber}})</h3>
 	    </div>
 	    <div class="box-body chat">
 	      <!-- chat item -->
