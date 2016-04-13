@@ -328,7 +328,7 @@ io.on('connection', function(socket){
         return true;
       }
     });
-    if(alreadyConnected){
+    if(!alreadyConnected){
       allClients.push(item);
     }
     if(urls.length>0){
