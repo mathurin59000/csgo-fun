@@ -78,8 +78,8 @@ var prod = 'https://csgo-fun.herokuapp.com/'
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new SteamStrategy({
-    returnURL: 'https://csgo-fun.herokuapp.com/auth/steam/return',
-    realm: 'https://csgo-fun.herokuapp.com/',
+    returnURL: 'http://localhost:8080/auth/steam/return',
+    realm: 'http://localhost:8080/',
     apiKey: '336F47CADE44154B12B320F6F6B4AA02'
   },
   function(identifier, profile, done) {

@@ -121,6 +121,11 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
     youtube.player.unMute();
   };
 
+  this.stopPlayer = function(){
+    youtube.player.stopVideo();
+    youtube.player.clearVideo();
+  };
+
   this.setVolume = function(volume){
     youtube.player.setVolume(volume);
   };

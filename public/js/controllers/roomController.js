@@ -56,6 +56,9 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  				if($scope.urls.length>0&&$scope.urls[0].id==id){
 	  					socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
 	  					$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
+	  				}else if($scope.urls.length==0){
+	  					//on stoppe la vidéo
+	  					VideosService.stopPlayer();
 	  				}
 	  				return true;
 	  			}
