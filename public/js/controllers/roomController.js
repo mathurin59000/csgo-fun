@@ -13,6 +13,13 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 
 	  var socketChat = io.connect(window.location.protocol+"//"+window.location.host+"/chat");
 
+	  $('body').keydown(function(e){
+	  	if(e.originalEvent.code=="F5"){
+	  		socketChat.emit("disconnect");
+	  		e.preventDefault();
+	  	}
+	  });
+
 	  socketChat.on('connect', function(){
 	  	socketChat.emit('user', $scope.user.id, $scope.user.displayName, $scope.user.photos[0].value);
 	  })
