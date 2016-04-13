@@ -91,11 +91,21 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  		$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
 	  	}
 	  })
-	  .on('removeUrl', function(id, username, url, photo){
+	  .on('removeUrl', function(id, username, title, url, photo){
+	  	/*console.log("removeUrl");
+	  	console.log(id);
+	  	console.log(url);
+	  	console.log($scope.urls[0].id);
+	  	console.log($scope.urls[0].url);*/
+	  	
 	  	if($scope.urls[0].id==id&&$scope.urls[0].url==url){
 	  		$scope.urls.shift();
+	  		//console.log('on est passé ! :)');
+	  		//console.log($scope.urls);
 	  		if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
+	  			//console.log('nouveau tableau');
 	  			socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
+	  			//console.log('on envoie');
 	  			resetLikes();
 	  			$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
 	  			repeatSetCurrentTime();
@@ -267,10 +277,14 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	    			break;
 	    	case 0:console.log("stop");
 	    			$scope.playerStatus = "STOP";
+	    			//console.log($scope.urls[0].id);
+	    			//console.log($scope.user.id);
 	    			if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
 	    				resetLikes();
 	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
+	    				//console.log("on envoie deleteUrl");
 	    				$scope.urls.shift();
+	    				//console.log($scope.urls);
 	    			}
 	    			break;
 	    	case 1:console.log("play");

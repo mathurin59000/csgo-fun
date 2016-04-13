@@ -78,8 +78,8 @@ var prod = 'https://csgo-fun.herokuapp.com/'
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new SteamStrategy({
-    returnURL: 'https://csgo-fun.herokuapp.com/auth/steam/return',
-    realm: 'https://csgo-fun.herokuapp.com/',
+    returnURL: 'http://localhost:8080/auth/steam/return',
+    realm: 'http://localhost:8080/',
     apiKey: '336F47CADE44154B12B320F6F6B4AA02'
   },
   function(identifier, profile, done) {
@@ -390,9 +390,12 @@ io.on('connection', function(socket){
   });
 
   socket.on('deleteUrl', function(id, username, title, url, photo){
+    //console.log('dans deleteUrl');
     if(urls.length>0&&urls[0].id==id&&urls[0].url==url){
       urls.shift();
+      //console.log('urls');
       socket.broadcast.emit('removeUrl', id, username, title, url, photo);
+      //console.log('on envoie removeUrl');
     }
   });
 
