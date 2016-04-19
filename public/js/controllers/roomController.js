@@ -1,4 +1,4 @@
-App.controller("RoomController", function($scope, Auth, $window, $log, $http, VideosService) {
+App.controller("RoomController", function($scope, Auth, $window, $log, $http, VideosService, SocketService) {
 
 	  $scope.chat = [];
 	  $scope.urls = [];
@@ -11,11 +11,11 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  						Chat
 	  *******************************************************/
 
-	  var socketChat = io.connect(window.location.protocol+"//"+window.location.host+"/chat");
+	  var socketChat = SocketService.getSocket();
 
 	  $('body').keydown(function(e){
 	  	if(e.originalEvent.code=="F5"){
-	  		socketChat.emit("disconnect");
+	  		socketChat.emit('disconnect');
 	  		e.preventDefault();
 	  	}
 	  });
@@ -54,6 +54,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  				console.log("index==0");
 	  				$scope.urls.splice(index, 1);
 	  				if($scope.urls.length>0&&$scope.urls[0].id==id){
+	  					console.log("on emit playVideo");
 	  					socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
 	  					$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
 	  				}else if($scope.urls.length==0){
@@ -95,20 +96,20 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	}
 	  })
 	  .on('removeUrl', function(id, username, title, url, photo){
-	  	/*console.log("removeUrl");
+	  	console.log("removeUrl");
 	  	console.log(id);
 	  	console.log(url);
 	  	console.log($scope.urls[0].id);
-	  	console.log($scope.urls[0].url);*/
+	  	console.log($scope.urls[0].url);
 	  	
 	  	if($scope.urls[0].id==id&&$scope.urls[0].url==url){
 	  		$scope.urls.shift();
-	  		//console.log('on est passé ! :)');
-	  		//console.log($scope.urls);
+	  		console.log('on est passé ! :)');
+	  		console.log($scope.urls);
 	  		if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
-	  			//console.log('nouveau tableau');
+	  			console.log('nouveau tableau');
 	  			socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
-	  			//console.log('on envoie');
+	  			console.log('on envoie');
 	  			resetLikes();
 	  			$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
 	  			repeatSetCurrentTime();
@@ -285,9 +286,9 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	    			if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
 	    				resetLikes();
 	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
-	    				//console.log("on envoie deleteUrl");
+	    				console.log("on envoie deleteUrl");
 	    				$scope.urls.shift();
-	    				//console.log($scope.urls);
+	    				console.log($scope.urls);
 	    			}
 	    			break;
 	    	case 1:console.log("play");

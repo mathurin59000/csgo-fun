@@ -64,3 +64,17 @@ App.constant('YT_event', {
     PAUSE:           2,
     STATUS_CHANGE:   3
 });
+
+App.run( function($rootScope, $location, SocketService) {
+   $rootScope.$watch(function() { 
+      return $location.path(); 
+    },
+    function(val){
+        console.log("val a changé");
+      // the handling function from step 1
+      if(val!="room"){
+        console.log("val!=room");
+        SocketService.disconnectSocket();
+      }
+    });
+});

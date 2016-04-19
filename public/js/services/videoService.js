@@ -123,7 +123,6 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
 
   this.stopPlayer = function(){
     youtube.player.stopVideo();
-    youtube.player.clearVideo();
   };
 
   this.setVolume = function(volume){

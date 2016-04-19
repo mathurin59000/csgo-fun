@@ -78,8 +78,8 @@ var prod = 'https://csgo-fun.herokuapp.com/'
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new SteamStrategy({
-    returnURL: 'https://csgo-fun.herokuapp.com/auth/steam/return',
-    realm: 'https://csgo-fun.herokuapp.com/',
+    returnURL: 'http://localhost:8080/auth/steam/return',
+    realm: 'http://localhost:8080/',
     apiKey: '336F47CADE44154B12B320F6F6B4AA02'
   },
   function(identifier, profile, done) {
@@ -122,7 +122,24 @@ router.get('/', function(req, res) {
   res.json({ message: 'hooray! welcome to our api!' }); 
 });
 
-// Retrieve stats of a player (accessed at GET http://localhost:8080/api/stat)
+/**
+ * @api {get} api/stat/:id Stats csgo's player
+ * @apiName StatsPlayer
+ * @apiGroup API
+ * @apiDescription Retrieve stats of a player.
+ *
+ * @apiParam {Number} id Steam ID.
+ * 
+ * @apiSuccess {String} firstname Firstname of the User.
+ * @apiSuccess {String} lastname  Lastname of the User.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "firstname": "John",
+ *       "lastname": "Doe"
+ *     }
+ */
 router.get('/stat', function(req, res){
   http.get('http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key='+steamApiKey+'&steamid='+req.query.id, function(response) {
         // Continuously update stream with data
@@ -138,7 +155,22 @@ router.get('/stat', function(req, res){
     });
 });
 
-// Retrieve actualities of the csgo community (accessed at GET http://localhost:8080/api/community)
+/**
+ * @api {get} api/community Actualities csgo community
+ * @apiName Actualities community
+ * @apiGroup API
+ * @apiDescription Retrieve actualities of the csgo community.
+ *
+ * @apiSuccess {String} firstname Firstname of the User.
+ * @apiSuccess {String} lastname  Lastname of the User.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "firstname": "John",
+ *       "lastname": "Doe"
+ *     }
+ */
 router.get('/community', function(req, res){
   http.get('http://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=730&count=20&maxlength=300&format=json', function(response) {
         // Continuously update stream with data
@@ -154,7 +186,22 @@ router.get('/community', function(req, res){
     });
 });
 
-// Retrieve steam profile (accessed at GET http://localhost:8080/api/getProfile)
+/**
+ * @api {get} api/getProfile Steam profile
+ * @apiName Steam profile
+ * @apiGroup API
+ * @apiDescription Retrieve steam profile.
+ *
+ * @apiSuccess {String} firstname Firstname of the User.
+ * @apiSuccess {String} lastname  Lastname of the User.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "firstname": "John",
+ *       "lastname": "Doe"
+ *     }
+ */
 router.get('/getProfile', function(req, res){
   http.get('http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key='+steamApiKey+'&steamids='+req.query.id, function(response) {
         var body = '';
@@ -168,7 +215,22 @@ router.get('/getProfile', function(req, res){
     });
 });
 
-// Retrieve csgo inventory (accessed at GET http://localhost:8080/api/inventory)
+/**
+ * @api {get} api/inventory/:id Inventory csgo
+ * @apiName Inventory csgo
+ * @apiGroup API
+ * @apiDescription Retrieve csgo inventory.
+ *
+ * @apiSuccess {String} firstname Firstname of the User.
+ * @apiSuccess {String} lastname  Lastname of the User.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "firstname": "John",
+ *       "lastname": "Doe"
+ *     }
+ */
 router.get('/inventory', function(req, res){
   http.get('http://steamcommunity.com/profiles/'+req.query.id+'/inventory/json/730/2', function(response) {
         // Continuously update stream with data
@@ -184,11 +246,68 @@ router.get('/inventory', function(req, res){
     });
 });
 
-// Retrieve steamid and passport (accessed at GET http://localhost:8080/api/steamid)
+/**
+ * @api {get} api/steamid Session
+ * @apiName Session
+ * @apiGroup API
+ * @apiDescription Return steamid and passport.
+ *
+ * @apiSuccess {Object} cookie The user's cookie.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *     "cookie": {
+ *      "originalMaxAge": null,
+ *      "expires": null,
+ *      "httpOnly": true,
+ *      "path": "/"
+ *      }
+ *     }
+ */
 router.get('/steamid', function(req, res){
   res.json(req.session);
 });
 
+/**
+ * @api {get} api/marketprice Marketplace csgo
+ * @apiName Marketplace csgo
+ * @apiGroup API
+ * @apiDescription Retrieve csgo market prices.
+ *
+ * @apiSuccess {Object} response Response marketplace.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *     "response": {
+ *         "success": 1,
+ *         "current_time": 1460714739,
+ *         "items": {
+ *            "AK-47 | Aquamarine Revenge (Battle-Scarred)": {
+ *            "last_updated": 1460703622,
+ *            "quantity": 81,
+ *            "value": 1097
+ *          },
+ *         "AK-47 | Aquamarine Revenge (Factory New)": {
+ *            "last_updated": 1460703622,
+ *            "quantity": 48,
+ *            "value": 4100
+ *          },
+ *          "AK-47 | Aquamarine Revenge (Field-Tested)": {
+ *            "last_updated": 1460703622,
+ *            "quantity": 127,
+ *            "value": 2038
+ *          },
+ *          "AK-47 | Aquamarine Revenge (Minimal Wear)": {
+ *            "last_updated": 1460703622,
+ *            "quantity": 68,
+ *            "value": 3051
+ *          },
+ *          ...
+ *      }
+ *    }
+ */
 router.get('/marketprice', function(req, res){
   res.json(marketPrices);
 });
@@ -506,7 +625,7 @@ function repeatMarketPrice(){
     console.log('Unable to connect to Mongo.');
     process.exit(1);
   } else {
-    app.listen(port, function() {
+    server.listen(port, function() {
       console.log('Server listening on port ' + port);
     })
   }
