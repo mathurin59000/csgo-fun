@@ -41,6 +41,122 @@
 	  </div>
 	</div>
 
+	<!-- Modal Playlist-->
+	<div class="modal fade" id="myModalPlaylist" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="PlaylistsController">
+	  <div class="modal-dialog" role="document" style="width: 80%;margin-left: 10%;margin-right: 10%;">
+	    <div class="modal-content">
+	    	<div class="modal-header">
+	    		Playlists
+	    	</div>
+	      	<div class="modal-body">
+	      		<div class="row">
+	      			<div class="col-lg-3 col-md-3">
+	      				<ul class="list-group">
+						  <li class="list-group-item">
+						    <span class="label label-default label-pill pull-xs-right">14</span>
+						    Cras justo odio
+						  </li>
+						  <li class="list-group-item">
+						    <span class="label label-default label-pill pull-xs-right">2</span>
+						    Dapibus ac facilisis in
+						  </li>
+						  <li class="list-group-item">
+						    <span class="label label-default label-pill pull-xs-right">1</span>
+						    Morbi leo risus
+						  </li>
+						</ul>
+						<div class="row">
+							<div class="col-md-6 col-lg-6">
+								<button class="btn btn-success btn-block" ng-click="changeMode('add')">Add Playlist</button>
+							</div>
+							<div class="col-md-6 col-lg-6">
+								<button class="btn btn-danger btn-block">Delete Playlist</button>
+							</div>
+						</div>
+	      			</div>
+	      			<div class="col-lg-9 col-md-9">
+	      				<div class="box" ng-if="!editMode">
+			                <div class="box-header">
+			                  <h3 class="box-title">Responsive Hover Table</h3>
+			                  <div class="box-tools">
+			                    <div class="input-group" style="width: 150px;">
+			                      <input type="text" name="table_search" class="form-control input-sm pull-right" placeholder="Search">
+			                      <div class="input-group-btn">
+			                        <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+			                      </div>
+			                    </div>
+			                  </div>
+			                </div><!-- /.box-header -->
+			                <div class="box-body table-responsive no-padding">
+			                  <table class="table table-hover">
+			                    <tbody><tr>
+			                      <th>ID</th>
+			                      <th>User</th>
+			                      <th>Date</th>
+			                      <th>Status</th>
+			                      <th>Reason</th>
+			                    </tr>
+			                    <tr>
+			                      <td>183</td>
+			                      <td>John Doe</td>
+			                      <td>11-7-2014</td>
+			                      <td><span class="label label-success">Approved</span></td>
+			                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+			                    </tr>
+			                    <tr>
+			                      <td>219</td>
+			                      <td>Alexander Pierce</td>
+			                      <td>11-7-2014</td>
+			                      <td><span class="label label-warning">Pending</span></td>
+			                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+			                    </tr>
+			                    <tr>
+			                      <td>657</td>
+			                      <td>Bob Doe</td>
+			                      <td>11-7-2014</td>
+			                      <td><span class="label label-primary">Approved</span></td>
+			                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+			                    </tr>
+			                    <tr>
+			                      <td>175</td>
+			                      <td>Mike Doe</td>
+			                      <td>11-7-2014</td>
+			                      <td><span class="label label-danger">Denied</span></td>
+			                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+			                    </tr>
+			                  </tbody></table>
+			                </div><!-- /.box-body -->
+			             </div>
+			             <div class="box box-info" ng-if="editMode">
+			                <div class="box-header with-border">
+			                  <h3 class="box-title">New playlist</h3>
+			                </div><!-- /.box-header -->
+			                <!-- form start -->
+			                <form class="form-horizontal">
+			                  <div class="box-body">
+			                    <div class="form-group">
+			                      <label for="inputEmail3" class="col-sm-2 control-label">Name</label>
+			                      <div class="col-sm-10">
+			                        <input type="text" class="form-control" placeholder="Name..." ng-model="newName">
+			                      </div>
+			                    </div>
+			                  </div><!-- /.box-body -->
+			                  <div class="box-footer">
+			                    <button class="btn btn-default">Cancel</button>
+			                    <button class="btn btn-info pull-right" ng-click="addPlaylist()">Save</button>
+			                  </div><!-- /.box-footer -->
+			                </form>
+			              </div>
+	      			</div>
+	      		</div>
+	      	</div>
+              <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		      </div>
+    	  </div>
+	  </div>
+	</div>
+
 <div class="row">
 	<section class="col-lg-3 connectedSortable">
 		<!-- Chat box -->
@@ -64,9 +180,18 @@
 			      </div><!-- /.item -->
 			  </div>
 		    <div class="box-footer">
-		      	<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#myModal">
-				  Add Video
-				</button>
+		    	<div class="row">
+			    	<div class="col-lg-6 col-md-6">
+				      	<button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#myModal">
+						  Add Video
+						</button>
+					</div>
+					<div class="col-lg-6 col-md-6">
+				      	<button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#myModalPlaylist">
+						  Playlist
+						</button>
+					</div>
+				</div>
 		        <!--<input class="form-control" placeholder="Type url..." ng-model="newUrl">
 		        <div class="input-group-btn">
 		          <button class="btn btn-success" ng-click="sendUrl()">Send</button>
@@ -98,6 +223,14 @@
 		<button class="btn btn-sm btn-success" ng-click="addVote('+1')"><i class="fa fa-thumbs-up"></i> +1</button>
         <button class="btn btn-sm btn-danger" ng-click="addVote('-1')"><i class="fa fa-thumbs-down"></i> -1</button>
         <span class="label label-warning">{{likes.length}} : {{unlikes.length}}</span>
+        <div class="btn-group">
+          <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-plus"></i>&nbsp;Add to playlist &nbsp;<span class="fa fa-caret-down"></span></button>
+          <ul class="dropdown-menu">
+            <li><a>my playlist #1</a></li>
+            <li><a>my playlist #2</a></li>
+            <li><a>my playlist #3</a></li>
+          </ul>
+        </div>
         <h4 ng-show="urls.length>0">Title : {{urls[0].title}}</h4>
         <p><i class="fa fa-youtube-play"></i> Player status is: {{playerStatus}}</p>
 	</section><!-- /.Left col -->

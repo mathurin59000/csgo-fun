@@ -46,14 +46,14 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	$scope.clientsNumber = clientsNumber;
 	  	$scope.$apply();
 	  })
-	  .on('bye', function(id){
+	  .on('bye', function(id, clientsNumber){
 	  	console.log("Dans le bye !!!");
 	  	if($scope.urls.length>0){
 	  		$scope.urls.some(function name(element, index, array){
 	  			if(element.id==id&&index==0){
 	  				console.log("index==0");
 	  				$scope.urls.splice(index, 1);
-	  				if($scope.urls.length>0&&$scope.urls[0].id==id){
+	  				if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
 	  					console.log("on emit playVideo");
 	  					socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
 	  					$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
@@ -69,6 +69,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  				return true;
 	  			}
 	  		});
+	  		$scope.clientsNumber = clientsNumber;
 	  	}
 	  	$scope.$apply();
 	  })
@@ -329,10 +330,12 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
     $scope.mute=false;
     $scope.nextPageToken = '';
     $scope.label = 'You haven\'t searched for any video yet!';
-    $scope.slider=50;
+    //$scope.slider=50;
 
     $scope.$watch('slider', function(value){
-    	VideosService.setVolume(value);
+    	if(value!=null){
+    		VideosService.setVolume(value);
+    	}
     });
 
     $scope.addMute = function(){

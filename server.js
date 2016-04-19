@@ -6,7 +6,7 @@ var express    = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var http = require('http');
-var app        = express();
+var app = express();
 var server = http.createServer(app);
 var io = require('socket.io').listen(server).of('/chat');
 //var io2 = require('socket.io').listen(server).of('/spin');
@@ -14,7 +14,8 @@ var morgan     = require('morgan');
 var path = require('path');
 var passport = require('passport');
 var SteamStrategy = require('passport-steam').Strategy;
-var db = require('./db');
+var MongoClient = require('mongodb').MongoClient
+var db;
 var steamApiKey = '336F47CADE44154B12B320F6F6B4AA02';
 var backpackApiKey = '56f5373dc440454b3b63a179';
 var marketPrices;
@@ -474,7 +475,7 @@ io.on('connection', function(socket){
           return true
         }
       });
-      socket.broadcast.emit('bye', id);
+      socket.broadcast.emit('bye', id, allClients.length);
   });
 
   socket.on('setCurrentTime', function(time){
@@ -527,6 +528,24 @@ io.on('connection', function(socket){
     }
   });
 });
+
+/////////////////////////////////////////////////////////////////////////
+
+router.route('/playlists')
+
+  .post(function(req, res){
+      console.log("dans POST /playlists");
+      db.collection('playlists').save({'steamid': req.query.steamid, 'name': req.query.name, 'items': []}, (err, result) => {
+        if(err){
+          console.log(err);
+        } 
+        else{
+          if(result.length==1){
+            return res.json(result.ops[0]);
+          }
+        }
+    })
+  })
 
 /*io2.on('connection', function(socket){
   console.log("client connected to the server (spin) !");
@@ -631,6 +650,17 @@ function repeatMarketPrice(){
   }
 });*/
 
-server.listen(port, function() {
+MongoClient.connect('mongodb://mramart:password@ds011231.mlab.com:11231/csgo-fun', (err, database) => {
+  if (err) return console.log(err)
+  db = database
+  if (database){
+    console.log("Database connected");
+  }
+  server.listen(port, function() {
+    console.log('Server listening on port ' + port);
+  })
+});
+
+/*server.listen(port, function() {
       console.log('Server listening on port ' + port);
-    })
+    })*/

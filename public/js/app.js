@@ -2,7 +2,7 @@ var App = angular.module("App", ['ui.router']);
 
 App.config(function($stateProvider, $urlRouterProvider) {
     
-    $urlRouterProvider.otherwise('/home');
+    //$urlRouterProvider.otherwise('/home');
     
     $stateProvider
         
@@ -65,16 +65,18 @@ App.constant('YT_event', {
     STATUS_CHANGE:   3
 });
 
-App.run( function($rootScope, $location, SocketService) {
+App.run( function($rootScope, $location, SocketService, $state) {
    $rootScope.$watch(function() { 
       return $location.path(); 
     },
     function(val){
         console.log("val a changé");
+        console.log(val);
       // the handling function from step 1
-      if(val!="room"){
-        console.log("val!=room");
+      if(val!="/room"){
+        console.log("val!=/room");
         SocketService.disconnectSocket();
       }
+
     });
 });

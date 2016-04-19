@@ -114,19 +114,29 @@ angular.module('App').service('VideosService', ['$window', '$rootScope', '$log',
   };
 
   this.mute = function(){
-    youtube.player.mute();
+    if(youtube.player!=null){
+      youtube.player.mute();
+    }
   };
 
   this.unMute = function(){
-    youtube.player.unMute();
+    if(youtube.player!=null){
+      youtube.player.unMute();
+    }
   };
 
   this.stopPlayer = function(){
-    youtube.player.stopVideo();
+    if(youtube.player!=null){
+      youtube.player.stopVideo();
+    }
   };
 
   this.setVolume = function(volume){
-    youtube.player.setVolume(volume);
+    console.log("dans setVolume");
+    $log.info(youtube.player);
+    if(youtube.player!=null){
+      youtube.player.setVolume(volume);
+    }
   };
 
   this.getCurrentTime = function() {
