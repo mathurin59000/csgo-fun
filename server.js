@@ -50,7 +50,8 @@ var port     = process.env.PORT || 8080; // set our port
 
 /*var mongoose   = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/csgo'); // connect to our database*/
-var Bear     = require('./app/models/bear');
+var Bear = require('./app/models/bear');
+//var Playlist = require('./app/models/playlist');
 
 
 /******************************************************
@@ -531,20 +532,117 @@ io.on('connection', function(socket){
 
 /////////////////////////////////////////////////////////////////////////
 
+router.route('/songs')
+
+  .post(function(req, res){
+      console.log("dans POST /songs");
+      if(req.query.playlistid&&req.query.title&&req.query.url){
+        db.collection('songs').save({'playlistid': req.query.playlistid, 'title': req.query.title, 'url':req.query.url}, (err, result) => {
+          if(err){
+            console.log(err);
+          } 
+          else{
+              console.log(result.ops);
+              return res.json(result.ops);
+          }
+        })
+      } 
+  })
+
+  .get(function(req, res){
+    console.log("dans GET /songs");
+    if(req.query.playlistid){
+      console.log(req.query.playlistid);
+      db.collection('songs').find({'playlistid': req.query.playlistid}).toArray(function(err, results) {
+        if(err){
+          console.log(err);
+        }
+        else{
+          return res.json(results)
+        }
+        // send HTML file populated with quotes here
+      })
+    }
+  })
+
+  .delete(function(req, res){
+    console.log("dans DELETE /songs");
+    if(req.query.id){
+      db.collection('songs').remove({'_id': req.query.id}, (err, result) => {
+        if(err){
+          console.log(err);
+        }
+        else{
+          console.log(result);
+          return res.json(result);
+        }
+      })
+    }
+  })
+
+
 router.route('/playlists')
 
   .post(function(req, res){
       console.log("dans POST /playlists");
-      db.collection('playlists').save({'steamid': req.query.steamid, 'name': req.query.name, 'items': []}, (err, result) => {
+      if(req.query.steamid&&req.query.name){
+        db.collection('playlists').save({'steamid': req.query.steamid, 'name': req.query.name}, (err, result) => {
+          if(err){
+            console.log(err);
+          } 
+          else{
+              console.log(result.ops);
+              return res.json(result.ops);
+          }
+        })
+      } 
+  })
+
+  .get(function(req, res){
+    console.log("dans GET /playlists");
+    if(req.query.steamid){
+      console.log(req.query.steamid);
+      db.collection('playlists').find({'steamid': req.query.steamid}).toArray(function(err, results) {
         if(err){
           console.log(err);
-        } 
-        else{
-          if(result.length==1){
-            return res.json(result.ops[0]);
-          }
         }
-    })
+        else{
+          return res.json(results)
+        }
+        // send HTML file populated with quotes here
+      })
+    }
+  })
+
+  .put(function(req, res){
+    console.log("dans PUT /playlists");
+    //console.log(req.query);
+    if(req.query._id&&req.query.steamid&&req.query.items){
+      var array = JSON.parse("["+req.query.items+"]");
+      console.log(array);
+      db.collection('playlists').updateOne({_id:req.query._id}, {$set: {items:array}}, function(err, playlist){
+        if(err){
+          console.log(err);
+        }
+        else{
+          console.log(playlist);
+        }
+      });
+    }
+  })
+
+  .delete(function(req, res){
+    console.log("dans DELETE /playlists");
+    if(req.query.id&&req.query.steamid){
+      db.collection('playlists').remove({'_id': req.query.id, 'steamid': req.query.steamid}, (err, result) => {
+        if(err){
+          console.log(err);
+        }
+        else{
+          console.log(result);
+        }
+      })
+    }
   })
 
 /*io2.on('connection', function(socket){

@@ -25,7 +25,7 @@
 	          <img src="{{item.snippet.thumbnails.default.url}}" alt="user image" class="online">
 	          <p class="message">
 	            <a class="name">
-	              <small class="text-muted pull-right"><button type="button" class="btn btn-success btn-sm" ng-click="sendUrl(item)" data-dismiss="modal"><i class="fa fa-plus"></i>&nbsp;Add</button></small>
+	              <small class="text-muted pull-right"><button type="button" class="btn btn-success btn-sm" ng-click="sendUrl(item)" data-dismiss="modal"><i class="fa fa-play"></i></button></small>
 	            {{item.snippet.title}}
 	            </a>
 	          {{item.snippet.description}}
@@ -42,7 +42,7 @@
 	</div>
 
 	<!-- Modal Playlist-->
-	<div class="modal fade" id="myModalPlaylist" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-controller="PlaylistsController">
+	<div class="modal fade" id="myModalPlaylist" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	  <div class="modal-dialog" role="document" style="width: 80%;margin-left: 10%;margin-right: 10%;">
 	    <div class="modal-content">
 	    	<div class="modal-header">
@@ -52,17 +52,9 @@
 	      		<div class="row">
 	      			<div class="col-lg-3 col-md-3">
 	      				<ul class="list-group">
-						  <li class="list-group-item">
-						    <span class="label label-default label-pill pull-xs-right">14</span>
-						    Cras justo odio
-						  </li>
-						  <li class="list-group-item">
-						    <span class="label label-default label-pill pull-xs-right">2</span>
-						    Dapibus ac facilisis in
-						  </li>
-						  <li class="list-group-item">
-						    <span class="label label-default label-pill pull-xs-right">1</span>
-						    Morbi leo risus
+						  <li class="list-group-item" ng-repeat="playlist in playlists" ng-click="changeTableSelected(playlist)">
+						    <!--<span class="label label-default label-pill pull-xs-right">{{playlist.items.length}}</span>-->
+						    {{playlist.name}}
 						  </li>
 						</ul>
 						<div class="row">
@@ -70,14 +62,17 @@
 								<button class="btn btn-success btn-block" ng-click="changeMode('add')">Add Playlist</button>
 							</div>
 							<div class="col-md-6 col-lg-6">
-								<button class="btn btn-danger btn-block">Delete Playlist</button>
+								<!--<button class="btn btn-danger btn-block" ng-class="{'disabled':deleteDisabled}">Delete Playlist</button>-->
 							</div>
 						</div>
 	      			</div>
 	      			<div class="col-lg-9 col-md-9">
-	      				<div class="box" ng-if="!editMode">
+	      				<div id="spin"></div>
+	      				<span ng-if="!editMode&&tableSelected==null">Select a playlist !</span>
+			            <span ng-if="!editMode&&tableSelected!=null&&tableSelected.items.length==0">None musics in '{{tableSelected.name}}' playlist...</span>
+	      				<div class="box" ng-if="!editMode&&tableSelected!=null&&tableSelected.items.length>0">
 			                <div class="box-header">
-			                  <h3 class="box-title">Responsive Hover Table</h3>
+			                  <h3 class="box-title">{{tableSelected.name}}</h3>
 			                  <div class="box-tools">
 			                    <div class="input-group" style="width: 150px;">
 			                      <input type="text" name="table_search" class="form-control input-sm pull-right" placeholder="Search">
@@ -90,39 +85,14 @@
 			                <div class="box-body table-responsive no-padding">
 			                  <table class="table table-hover">
 			                    <tbody><tr>
-			                      <th>ID</th>
-			                      <th>User</th>
-			                      <th>Date</th>
-			                      <th>Status</th>
-			                      <th>Reason</th>
+			                      <th>Position</th>
+			                      <th>Name</th>
+			                      <th>Tools</th>
 			                    </tr>
-			                    <tr>
-			                      <td>183</td>
-			                      <td>John Doe</td>
-			                      <td>11-7-2014</td>
-			                      <td><span class="label label-success">Approved</span></td>
-			                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-			                    </tr>
-			                    <tr>
-			                      <td>219</td>
-			                      <td>Alexander Pierce</td>
-			                      <td>11-7-2014</td>
-			                      <td><span class="label label-warning">Pending</span></td>
-			                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-			                    </tr>
-			                    <tr>
-			                      <td>657</td>
-			                      <td>Bob Doe</td>
-			                      <td>11-7-2014</td>
-			                      <td><span class="label label-primary">Approved</span></td>
-			                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-			                    </tr>
-			                    <tr>
-			                      <td>175</td>
-			                      <td>Mike Doe</td>
-			                      <td>11-7-2014</td>
-			                      <td><span class="label label-danger">Denied</span></td>
-			                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+			                    <tr ng-repeat="(index, item) in tableSelected.items">
+			                      <td>{{index+1}}</td>
+			                      <td>{{item.title}}</td>
+			                      <td><button type="button" class="btn btn-success btn-sm" ng-click="sendUrlPlaylist(item)" data-dismiss="modal"><i class="fa fa-play"></i></button><!--&nbsp;<button type="button" class="btn btn-danger btn-sm" ng-click="removeUrlPlaylist(item)" data-dismiss="modal"><i class="fa fa-trash"></i></button>--></td>
 			                    </tr>
 			                  </tbody></table>
 			                </div><!-- /.box-body -->
@@ -137,12 +107,12 @@
 			                    <div class="form-group">
 			                      <label for="inputEmail3" class="col-sm-2 control-label">Name</label>
 			                      <div class="col-sm-10">
-			                        <input type="text" class="form-control" placeholder="Name..." ng-model="newName">
+			                        <input class="form-control" placeholder="Name..." ng-model="model.name">
 			                      </div>
 			                    </div>
 			                  </div><!-- /.box-body -->
 			                  <div class="box-footer">
-			                    <button class="btn btn-default">Cancel</button>
+			                    <button class="btn btn-default" ng-click="changeMode('use')">Cancel</button>
 			                    <button class="btn btn-info pull-right" ng-click="addPlaylist()">Save</button>
 			                  </div><!-- /.box-footer -->
 			                </form>
@@ -188,7 +158,7 @@
 					</div>
 					<div class="col-lg-6 col-md-6">
 				      	<button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#myModalPlaylist">
-						  Playlist
+						  Playlists
 						</button>
 					</div>
 				</div>
@@ -226,9 +196,7 @@
         <div class="btn-group">
           <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-plus"></i>&nbsp;Add to playlist &nbsp;<span class="fa fa-caret-down"></span></button>
           <ul class="dropdown-menu">
-            <li><a>my playlist #1</a></li>
-            <li><a>my playlist #2</a></li>
-            <li><a>my playlist #3</a></li>
+            <li ng-repeat="playlist in playlists" ng-click="addToPlaylist(playlist)"><a>{{playlist.name}}</a></li>
           </ul>
         </div>
         <h4 ng-show="urls.length>0">Title : {{urls[0].title}}</h4>

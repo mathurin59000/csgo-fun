@@ -29,7 +29,7 @@ App.config(function($stateProvider, $urlRouterProvider) {
         .state('room', {
             url: '/room',
             templateUrl: 'js/templates/room.html',
-            controller: 'RoomController'      
+            controller: 'RoomController'   
         })
 
         .state('spin', {

@@ -116,6 +116,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  			repeatSetCurrentTime();
 	  		}
 	  	}
+	  	$scope.$apply();
 	  })
 	  .on('vote', function(id, username, vote, time){
 	  	var item = {
@@ -184,6 +185,29 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
   				alert("You're in the queue already...");
   			}
 	  };
+
+	  $scope.sendUrlPlaylist = function(item){
+	  	if(!userAlreadySentUrl()){
+  				$log.info(item);
+  				socketChat.emit('writeUrl', $scope.user.id, $scope.user.displayName, item.title, item.url, $scope.user.photos[0].value);
+	  			var item = {
+	  				id: $scope.user.id,
+	  				username: $scope.user.displayName,
+	  				title: item.title,
+	  				url: item.url,
+	  				photo: $scope.user.photos[0].value,
+	  				time: Date.now()
+	  			};
+	  			$scope.urls.push(item);
+	  			if($scope.urls.length==1){
+	  				$scope.youtube(item.url, item.title);
+	  				repeatSetCurrentTime();
+	  			}
+  			}
+  			else{
+  				alert("You're in the queue already...");
+  			}
+	  }
 
 	  function repeatSetCurrentTime(){
 	  	setTimeout(function(){
@@ -379,5 +403,181 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
         $scope.loadMoreButton.setDisabled(false);
       });
     };
+
+    /*************************************************************************************
+    								PLAYLISTS
+   	**************************************************************************************/
+
+   	$scope.editMode = false;
+	$scope.model={
+		'name': ''
+	};
+	$scope.playlists=[];
+	$scope.tableSelected;
+
+	console.log("get /api/playlists");
+	console.log($scope.user.id);
+	$http({
+	  method: 'GET',
+	  url: '/api/playlists',
+	  params: {
+	  	'steamid':$scope.user.id
+	  }
+	}).then(function successCallback(response) {
+			console.log("response pour le GET /api/playlists");
+			console.log(response);
+			$scope.playlists = response.data;
+		// this callback will be called asynchronously
+	    // when the response is available
+	}, function errorCallback(response) {
+	  	console.log(response);
+	    // called asynchronously if an error occurs
+	    // or server returns response with an error status.
+	});
+
+	$scope.changeMode = function(newMode) {
+		console.log("dans changeMode");
+		console.log(newMode);
+		if(newMode=="add"){
+			$scope.editMode=true;
+		}
+		else if(newMode=="use"){
+			$scope.editMode = false;
+		}
+		console.log($scope.editMode);
+	}
+
+	$scope.addPlaylist = function () {
+		console.log("dans addPlaylist");
+			console.log($scope.model.name);
+			console.log("on passe");
+			if($scope.model.name.length>0){
+				console.log("request POST go !")
+				$http({
+				  method: 'POST',
+				  url: '/api/playlists',
+				  params: {
+				  	'steamid':$scope.user.id,
+				  	'name': $scope.model.name,
+				  	'items': []
+				  }
+				}).then(function successCallback(response) {
+					if(response.data.length==1){
+						$scope.playlists.push(response.data[0]);
+					}
+					$scope.model.name='';
+					// this callback will be called asynchronously
+				    // when the response is available
+				  }, function errorCallback(response) {
+				  	console.log(response);
+				    // called asynchronously if an error occurs
+				    // or server returns response with an error status.
+				  });
+			}
+	}
+
+	$scope.addToPlaylist = function(playlist){
+		if($scope.urls.length>0){
+			console.log("Dans addToPlaylist !");
+			console.log(playlist);
+			var ind;
+
+			//update database
+			$http({
+			  method: 'POST',
+			  url: '/api/songs',
+			  params: {
+			  	'playlistid':playlist._id,
+			  	'title': $scope.urls[0].title,
+			  	'url': $scope.urls[0].url
+			  }
+			}).then(function successCallback(response) {
+				console.log("Response POST /api/songs");
+				console.log(response);
+				// this callback will be called asynchronously
+			    // when the response is available
+			  }, function errorCallback(response) {
+			  	console.log(response);
+			    // called asynchronously if an error occurs
+			    // or server returns response with an error status.
+			  });
+			console.log($scope.playlists);
+		}
+	};
+
+	$scope.deleteDisabled = true;
+
+	$scope.removeUrlPlaylist = function(item){
+		console.log("dans removeUrlPlaylist");
+		console.log(item);
+		$http({
+		  method: 'DELETE',
+		  url: '/api/songs',
+		  params: {
+		  	'id':item._id
+		  }
+		}).then(function successCallback(response) {
+			console.log("Response DELETE /api/songs");
+			console.log(response);
+			// this callback will be called asynchronously
+		    // when the response is available
+		  }, function errorCallback(response) {
+		  	console.log(response);
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		  });
+	}
+
+	$scope.changeTableSelected = function(item){
+		var opts = {
+		  lines: 13 // The number of lines to draw
+		, length: 0 // The length of each line
+		, width: 14 // The line thickness
+		, radius: 42 // The radius of the inner circle
+		, scale: 0.3 // Scales overall size of the spinner
+		, corners: 1 // Corner roundness (0..1)
+		, color: '#000' // #rgb or #rrggbb or array of colors
+		, opacity: 0.25 // Opacity of the lines
+		, rotate: 0 // The rotation offset
+		, direction: 1 // 1: clockwise, -1: counterclockwise
+		, speed: 1 // Rounds per second
+		, trail: 60 // Afterglow percentage
+		, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+		, zIndex: 2e9 // The z-index (defaults to 2000000000)
+		, className: 'spinner' // The CSS class to assign to the spinner
+		, top: '50%' // Top position relative to parent
+		, left: '50%' // Left position relative to parent
+		, shadow: false // Whether to render a shadow
+		, hwaccel: false // Whether to use hardware acceleration
+		, position: 'absolute' // Element positioning
+		}
+		var target = document.getElementById('spin')
+		var spinner = new Spinner(opts).spin(target);
+
+		$scope.tableSelected=item;
+		//update database
+		$http({
+		  method: 'GET',
+		  url: '/api/songs',
+		  params: {
+		  	'playlistid':item._id
+		  }
+		}).then(function successCallback(response) {
+			console.log("Response GET /api/songs");
+			console.log(response);
+			console.log(item)
+			item.items = response.data;
+			spinner.stop();
+			// this callback will be called asynchronously
+		    // when the response is available
+		  }, function errorCallback(response) {
+		  	console.log(response);
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		  });
+		if($scope.tableSelected!=null){
+			$scope.deleteDisabled=false;
+		}
+	};
 
 });
