@@ -460,6 +460,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 								  	'playlistid':$scope.playlists[$scope.playlists.length-1]._id,
 								  	'title': element.snippet.title,
 								  	'url': element.snippet.resourceId.videoId,
+								  	'maxResults': 50,
 								  	'thumbnail': element.snippet.thumbnails.default.url
 								  }
 								}).then(function successCallback(response) {
