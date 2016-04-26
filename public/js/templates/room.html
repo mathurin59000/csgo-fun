@@ -52,7 +52,7 @@
 	      		<div class="row">
 	      			<div class="col-lg-3 col-md-3">
 	      				<ul class="list-group">
-						  <li class="list-group-item" ng-repeat="playlist in playlists" ng-click="changeTableSelected(playlist)">
+						  <li class="list-group-item" ng-repeat="playlist in playlists" ng-click="changeMode('use');changeTableSelected(playlist)">
 						    <!--<span class="label label-default label-pill pull-xs-right">{{playlist.items.length}}</span>-->
 						    {{playlist.name}}
 						  </li>
@@ -62,15 +62,15 @@
 								<button class="btn btn-success btn-block" ng-click="changeMode('add')">Add Playlist</button>
 							</div>
 							<div class="col-md-6 col-lg-6">
-								<!--<button class="btn btn-danger btn-block" ng-class="{'disabled':deleteDisabled}">Delete Playlist</button>-->
+								<button class="btn btn-primary btn-block" ng-click="changeMode('import')"><i class="fa fa-youtube-square"></i>&nbsp;Import</button>
 							</div>
 						</div>
 	      			</div>
 	      			<div class="col-lg-9 col-md-9">
 	      				<div id="spin"></div>
-	      				<span ng-if="!editMode&&tableSelected==null">Select a playlist !</span>
-			            <span ng-if="!editMode&&tableSelected!=null&&tableSelected.items.length==0">None musics in '{{tableSelected.name}}' playlist...</span>
-	      				<div class="box" ng-if="!editMode&&tableSelected!=null&&tableSelected.items.length>0">
+	      				<span ng-if="!importMode&&!editMode&&tableSelected==null">Select a playlist !</span>
+			            <span ng-if="!importMode&&!editMode&&tableSelected!=null&&tableSelected.items.length==0">None musics in '{{tableSelected.name}}' playlist...</span>
+	      				<div class="box" ng-if="!importMode&&!editMode&&tableSelected!=null&&tableSelected.items.length>0">
 			                <div class="box-header">
 			                  <h3 class="box-title">{{tableSelected.name}}</h3>
 			                  <div class="box-tools">
@@ -91,13 +91,13 @@
 			                    </tr>
 			                    <tr ng-repeat="(index, item) in tableSelected.items">
 			                      <td>{{index+1}}</td>
-			                      <td>{{item.title}}</td>
+			                      <td><img src="{{item.thumbnail}}" alt="user image" class="online" width="45px" height="30px">&nbsp;{{item.title}}</td>
 			                      <td><button type="button" class="btn btn-success btn-sm" ng-click="sendUrlPlaylist(item)" data-dismiss="modal"><i class="fa fa-play"></i></button><!--&nbsp;<button type="button" class="btn btn-danger btn-sm" ng-click="removeUrlPlaylist(item)" data-dismiss="modal"><i class="fa fa-trash"></i></button>--></td>
 			                    </tr>
 			                  </tbody></table>
 			                </div><!-- /.box-body -->
 			             </div>
-			             <div class="box box-info" ng-if="editMode">
+			             <div class="box box-info" ng-if="editMode&&!importMode">
 			                <div class="box-header with-border">
 			                  <h3 class="box-title">New playlist</h3>
 			                </div><!-- /.box-header -->
@@ -110,10 +110,32 @@
 			                        <input class="form-control" placeholder="Name..." ng-model="model.name">
 			                      </div>
 			                    </div>
+			                    <span class="text-danger">{{errorAddPlaylist}}</span>
 			                  </div><!-- /.box-body -->
 			                  <div class="box-footer">
 			                    <button class="btn btn-default" ng-click="changeMode('use')">Cancel</button>
 			                    <button class="btn btn-info pull-right" ng-click="addPlaylist()">Save</button>
+			                  </div><!-- /.box-footer -->
+			                </form>
+			              </div>
+			              <div class="box box-info" ng-if="importMode&&!editMode">
+			                <div class="box-header with-border">
+			                  <h3 class="box-title">Import youtube playlist (ex:https://www.youtube.com/playlist?list=<b>PLDcTs_BCVuTe1HfS5CEwsqiCUAeBg8Z-2</b>)</h3>
+			                </div><!-- /.box-header -->
+			                <!-- form start -->
+			                <form class="form-horizontal">
+			                  <div class="box-body">
+			                    <div class="form-group">
+			                      <label class="col-sm-2 control-label">Playlist Id</label>
+			                      <div class="col-sm-10">
+			                        <input class="form-control" placeholder="Playlist ID..." ng-model="model.playlistId">
+			                      </div>
+			                    </div>
+			                    <span class="text-danger">{{errorImportPlaylist}}</span>
+			                  </div><!-- /.box-body -->
+			                  <div class="box-footer">
+			                    <button class="btn btn-default" ng-click="changeMode('use')">Cancel</button>
+			                    <button class="btn btn-info pull-right" ng-click="importPlaylist()">Import</button>
 			                  </div><!-- /.box-footer -->
 			                </form>
 			              </div>

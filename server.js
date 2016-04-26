@@ -80,8 +80,8 @@ var prod = 'https://csgo-fun.herokuapp.com/'
 //   credentials (in this case, an OpenID identifier and profile), and invoke a
 //   callback with a user object.
 passport.use(new SteamStrategy({
-    returnURL: 'https://csgo-fun.herokuapp.com/auth/steam/return',
-    realm: 'https://csgo-fun.herokuapp.com/',
+    returnURL: 'http://localhost:8080/auth/steam/return',
+    realm: 'http://localhost:8080/',
     apiKey: '336F47CADE44154B12B320F6F6B4AA02'
   },
   function(identifier, profile, done) {
@@ -489,7 +489,7 @@ io.on('connection', function(socket){
     }
   });
 
-  socket.on('writeUrl', function(id, username, title, url, photo){
+  socket.on('writeUrl', function(id, username, title, url, photo, thumbnail){
     if(id&&username&&url){
       var item = {
         id: id,
@@ -497,25 +497,26 @@ io.on('connection', function(socket){
         title: title,
         url: url,
         photo: photo,
+        thumbnail: thumbnail,
         time: Date.now()
       };
       urls.push(item);
-      socket.broadcast.emit('addUrl', id, username, title, url, photo, Date.now());
+      socket.broadcast.emit('addUrl', id, username, title, url, photo, thumbnail, Date.now());
     }
   });
 
-  socket.on('playVideo', function(id, username, title, url, photo){
+  socket.on('playVideo', function(id, username, title, url, photo, thumbnail){
     if(urls[0].id=id){
-      socket.broadcast.emit('receivePlayVideo', urls[0].id, urls[0].username, urls[0].title, urls[0].url, urls[0].photo);
+      socket.broadcast.emit('receivePlayVideo', urls[0].id, urls[0].username, urls[0].title, urls[0].url, urls[0].photo, urls[0].thumbnail);
     }
   });
 
-  socket.on('deleteUrl', function(id, username, title, url, photo){
+  socket.on('deleteUrl', function(id, username, title, url, photo, thumbnail){
     //console.log('dans deleteUrl');
     if(urls.length>0&&urls[0].id==id&&urls[0].url==url){
       urls.shift();
       //console.log('urls');
-      socket.broadcast.emit('removeUrl', id, username, title, url, photo);
+      socket.broadcast.emit('removeUrl', id, username, title, url, photo, thumbnail);
       //console.log('on envoie removeUrl');
     }
   });
@@ -536,8 +537,9 @@ router.route('/songs')
 
   .post(function(req, res){
       console.log("dans POST /songs");
-      if(req.query.playlistid&&req.query.title&&req.query.url){
-        db.collection('songs').save({'playlistid': req.query.playlistid, 'title': req.query.title, 'url':req.query.url}, (err, result) => {
+      if(req.query.playlistid&&req.query.title&&req.query.url&&req.query.thumbnail){
+        console.log('on save');
+        db.collection('songs').save({'playlistid': req.query.playlistid, 'title': req.query.title, 'url':req.query.url, 'thumbnail': req.query.thumbnail}, (err, result) => {
           if(err){
             console.log(err);
           } 

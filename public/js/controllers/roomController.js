@@ -76,13 +76,14 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  .on('error', function(error){
 	  	alert('error Websocket : '+error);
 	  })
-	  .on('addUrl', function(id, username, title, url, photo, time){
+	  .on('addUrl', function(id, username, title, url, photo, thumbnail, time){
 	  	var item = {
 	  		id: id,
 	  		username: username,
 	  		title: title,
 	  		url: url,
 	  		photo: photo,
+	  		thumbnail: thumbnail,
 	  		time: time
 	  	};
 	  	$scope.urls.push(item);
@@ -91,12 +92,12 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 		}
 	  	$scope.$apply();
 	  })
-	  .on('receivePlayVideo', function(id, username, title, url, photo){
+	  .on('receivePlayVideo', function(id, username, title, url, photo, thumbnail){
 	  	if($scope.urls.length>0&&$scope.urls[0].id==id){
 	  		$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
 	  	}
 	  })
-	  .on('removeUrl', function(id, username, title, url, photo){
+	  .on('removeUrl', function(id, username, title, url, photo, thumbnail){
 	  	console.log("removeUrl");
 	  	console.log(id);
 	  	console.log(url);
@@ -109,7 +110,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  		console.log($scope.urls);
 	  		if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
 	  			console.log('nouveau tableau');
-	  			socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
+	  			socketChat.emit('playVideo', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo, $scope.urls[0].thumbnail);
 	  			console.log('on envoie');
 	  			resetLikes();
 	  			$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
@@ -164,15 +165,18 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  };
 
 	  $scope.sendUrl = function(item){
+	  		$log.info("dans sendUrl");
+	  		$log.info(item);
   			if(!userAlreadySentUrl()){
   				$log.info(item);
-  				socketChat.emit('writeUrl', $scope.user.id, $scope.user.displayName, item.snippet.title, item.id.videoId, $scope.user.photos[0].value);
+  				socketChat.emit('writeUrl', $scope.user.id, $scope.user.displayName, item.snippet.title, item.id.videoId, $scope.user.photos[0].value, item.snippet.thumbnails.default.url);
 	  			var item = {
 	  				id: $scope.user.id,
 	  				username: $scope.user.displayName,
 	  				title: item.snippet.title,
 	  				url: item.id.videoId,
 	  				photo: $scope.user.photos[0].value,
+	  				thumbnail: item.snippet.thumbnails.default.url,
 	  				time: Date.now()
 	  			};
 	  			$scope.urls.push(item);
@@ -310,7 +314,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	    			//console.log($scope.user.id);
 	    			if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
 	    				resetLikes();
-	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
+	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo, $scope.urls[0].thumbnail);
 	    				console.log("on envoie deleteUrl");
 	    				$scope.urls.shift();
 	    				console.log($scope.urls);
@@ -323,7 +327,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	    			$scope.playerStatus = "PAUSE";
 	    			if($scope.urls.length>0&&$scope.urls[0].id==$scope.user.id){
 	    				resetLikes();
-	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo);
+	    				socketChat.emit('deleteUrl', $scope.urls[0].id, $scope.urls[0].username, $scope.urls[0].title, $scope.urls[0].url, $scope.urls[0].photo, $scope.urls[0].thumbnail);
 	    				$scope.urls.shift();
 	    			}
 	    			break;
@@ -373,6 +377,135 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
     	}
     };
 
+    $scope.importPlaylist = function(){
+    	$scope.errorImportPlaylist = "";
+    	var opts = {
+		  lines: 13 // The number of lines to draw
+		, length: 0 // The length of each line
+		, width: 14 // The line thickness
+		, radius: 42 // The radius of the inner circle
+		, scale: 0.3 // Scales overall size of the spinner
+		, corners: 1 // Corner roundness (0..1)
+		, color: '#000' // #rgb or #rrggbb or array of colors
+		, opacity: 0.25 // Opacity of the lines
+		, rotate: 0 // The rotation offset
+		, direction: 1 // 1: clockwise, -1: counterclockwise
+		, speed: 1 // Rounds per second
+		, trail: 60 // Afterglow percentage
+		, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+		, zIndex: 2e9 // The z-index (defaults to 2000000000)
+		, className: 'spinner' // The CSS class to assign to the spinner
+		, top: '50%' // Top position relative to parent
+		, left: '50%' // Left position relative to parent
+		, shadow: false // Whether to render a shadow
+		, hwaccel: false // Whether to use hardware acceleration
+		, position: 'absolute' // Element positioning
+		}
+		var target = document.getElementById('spin')
+		var spinner = new Spinner(opts).spin(target);
+    	console.log("dans importPlaylist");
+    	console.log($scope.model.playlistId);
+    	if(typeof($scope.model.playlistId)!=undefined&&$scope.model.playlistId.length>0){
+    		console.log("id valide");
+    		$http.get('https://www.googleapis.com/youtube/v3/playlists', {
+		        params: {
+		          key: 'AIzaSyD0WtrkfGnp0t2j91c74nWnUo1h8QIq0Ng',
+		          part: 'snippet',
+		          id: $scope.model.playlistId
+		        }
+		      })
+		      .success( function (data) {
+		        if (data.items.length === 0) {
+		          $scope.label = 'None songs found!';
+		        }
+		        console.log(data.items[0].snippet.title);
+		        var playlistExist = false;
+				$scope.playlists.some(function name(element, index, array){
+					if(element.name==data.items[0].snippet.title){
+						playlistExist = true;
+						return true;
+					}
+				});
+				if(!playlistExist){
+					$http({
+					  method: 'POST',
+					  url: '/api/playlists',
+					  params: {
+					  	'steamid':$scope.user.id,
+					  	'name': data.items[0].snippet.title,
+					  	'items': []
+					  }
+					}).then(function successCallback(response) {
+						if(response.data.length==1){
+							$scope.playlists.push(response.data[0]);
+						}
+						$http.get('https://www.googleapis.com/youtube/v3/playlistItems', {
+					        params: {
+					          key: 'AIzaSyD0WtrkfGnp0t2j91c74nWnUo1h8QIq0Ng',
+					          part: 'snippet',
+					          playlistId: $scope.model.playlistId
+					        }
+					      })
+					      .success( function (data) {
+					        if (data.items.length === 0) {
+					          $scope.label = 'None songs found!';
+					        }
+					        console.log(data);
+					        data.items.forEach(function name(element, index, array){
+					        	console.log(element.snippet);
+					        	$http({
+								  method: 'POST',
+								  url: '/api/songs',
+								  params: {
+								  	'playlistid':$scope.playlists[$scope.playlists.length-1]._id,
+								  	'title': element.snippet.title,
+								  	'url': element.snippet.resourceId.videoId,
+								  	'thumbnail': element.snippet.thumbnails.default.url
+								  }
+								}).then(function successCallback(response) {
+									console.log("Response POST /api/songs");
+									console.log(response);
+									// this callback will be called asynchronously
+								    // when the response is available
+								  }, function errorCallback(response) {
+								  	console.log(response);
+								    // called asynchronously if an error occurs
+								    // or server returns response with an error status.
+								  });
+								spinner.stop();
+					        });
+					      })
+					      .error( function () {
+					        $log.info('error');
+					      })
+					      .finally( function () {
+					        
+					      });
+						// this callback will be called asynchronously
+					    // when the response is available
+					  }, function errorCallback(response) {
+					  	console.log(response);
+					    // called asynchronously if an error occurs
+					    // or server returns response with an error status.
+					  });
+				}
+				else{
+					spinner.stop();
+					$scope.errorImportPlaylist = "This name is already used...";
+				}
+		        
+		      })
+		      .error( function () {
+		        $log.info('error');
+		      })
+		      .finally( function () {
+		        
+		      });
+
+    		
+    	}
+    }
+
     $scope.search = function (isNewQuery) {
       $http.get('https://www.googleapis.com/youtube/v3/search', {
         params: {
@@ -410,7 +543,8 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 
    	$scope.editMode = false;
 	$scope.model={
-		'name': ''
+		'name': '',
+		'playlistId': ''
 	};
 	$scope.playlists=[];
 	$scope.tableSelected;
@@ -440,39 +574,59 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 		console.log(newMode);
 		if(newMode=="add"){
 			$scope.editMode=true;
+			$scope.importMode=false;
 		}
 		else if(newMode=="use"){
 			$scope.editMode = false;
+			$scope.importMode = false;
+		}
+		else if(newMode=="import"){
+			$scope.editMode=false;
+			$scope.importMode=true;
 		}
 		console.log($scope.editMode);
+		console.log($scope.importMode);
 	}
 
 	$scope.addPlaylist = function () {
+		$scope.errorAddPlaylist = "";
 		console.log("dans addPlaylist");
 			console.log($scope.model.name);
 			console.log("on passe");
 			if($scope.model.name.length>0){
-				console.log("request POST go !")
-				$http({
-				  method: 'POST',
-				  url: '/api/playlists',
-				  params: {
-				  	'steamid':$scope.user.id,
-				  	'name': $scope.model.name,
-				  	'items': []
-				  }
-				}).then(function successCallback(response) {
-					if(response.data.length==1){
-						$scope.playlists.push(response.data[0]);
+				var playlistExist = false;
+				$scope.playlists.some(function name(element, index, array){
+					if(element.name==$scope.model.name){
+						playlistExist = true;
+						return true;
 					}
-					$scope.model.name='';
-					// this callback will be called asynchronously
-				    // when the response is available
-				  }, function errorCallback(response) {
-				  	console.log(response);
-				    // called asynchronously if an error occurs
-				    // or server returns response with an error status.
-				  });
+				});
+				if(!playlistExist){
+					console.log("request POST go !")
+					$http({
+					  method: 'POST',
+					  url: '/api/playlists',
+					  params: {
+					  	'steamid':$scope.user.id,
+					  	'name': $scope.model.name,
+					  	'items': []
+					  }
+					}).then(function successCallback(response) {
+						if(response.data.length==1){
+							$scope.playlists.push(response.data[0]);
+						}
+						$scope.model.name='';
+						// this callback will be called asynchronously
+					    // when the response is available
+					  }, function errorCallback(response) {
+					  	console.log(response);
+					    // called asynchronously if an error occurs
+					    // or server returns response with an error status.
+					  });
+				}
+				else{
+					$scope.errorAddPlaylist = "This name is already used...";
+				}
 			}
 	}
 
@@ -489,7 +643,8 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 			  params: {
 			  	'playlistid':playlist._id,
 			  	'title': $scope.urls[0].title,
-			  	'url': $scope.urls[0].url
+			  	'url': $scope.urls[0].url,
+			  	'thumbnail': $scope.urls[0].thumbnail
 			  }
 			}).then(function successCallback(response) {
 				console.log("Response POST /api/songs");
