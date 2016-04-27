@@ -6,6 +6,8 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  $scope.unlikes = [];
 	  $scope.results = [];
 	  $scope.user = JSON.parse(Auth.isAuthenticated());
+	  $scope.history = VideosService.getHistory();
+	  $scope.queue = [];
 
 	  /******************************************************
 	  						Chat
@@ -38,6 +40,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	if($scope.urls.length>0){
 	  		setTimeout(function(){ 
 		     $scope.youtubeCurrentTime($scope.urls[0].url, $scope.urls[0].title, currentTimeVideo);
+		     $scope.history = VideosService.archiveVideo($scope.urls[0]);
 		  }, 2000);	
 	  	}
 	  	$scope.$apply();
@@ -89,12 +92,14 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  	$scope.urls.push(item);
 	  	if($scope.urls.length==1){
 			$scope.youtube(item.url, item.title);
+			$scope.history = VideosService.archiveVideo(item);
 		}
 	  	$scope.$apply();
 	  })
 	  .on('receivePlayVideo', function(id, username, title, url, photo, thumbnail){
 	  	if($scope.urls.length>0&&$scope.urls[0].id==id){
 	  		$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
+	  		$scope.history = VideosService.archiveVideo($scope.urls[0]);
 	  	}
 	  })
 	  .on('removeUrl', function(id, username, title, url, photo, thumbnail){
@@ -114,6 +119,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  			console.log('on envoie');
 	  			resetLikes();
 	  			$scope.youtube($scope.urls[0].url, $scope.urls[0].title);
+	  			$scope.history = VideosService.archiveVideo($scope.urls[0]);
 	  			repeatSetCurrentTime();
 	  		}
 	  	}
@@ -182,6 +188,7 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  			$scope.urls.push(item);
 	  			if($scope.urls.length==1){
 	  				$scope.youtube(item.url, item.title);
+	  				$scope.history = VideosService.archiveVideo($scope.urls[0]);
 	  				repeatSetCurrentTime();
 	  			}
   			}
@@ -193,18 +200,20 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
 	  $scope.sendUrlPlaylist = function(item){
 	  	if(!userAlreadySentUrl()){
   				$log.info(item);
-  				socketChat.emit('writeUrl', $scope.user.id, $scope.user.displayName, item.title, item.url, $scope.user.photos[0].value);
+  				socketChat.emit('writeUrl', $scope.user.id, $scope.user.displayName, item.title, item.url, $scope.user.photos[0].value, item.thumbnail);
 	  			var item = {
 	  				id: $scope.user.id,
 	  				username: $scope.user.displayName,
 	  				title: item.title,
 	  				url: item.url,
 	  				photo: $scope.user.photos[0].value,
+	  				thumbnail: item.thumbnail,
 	  				time: Date.now()
 	  			};
 	  			$scope.urls.push(item);
 	  			if($scope.urls.length==1){
 	  				$scope.youtube(item.url, item.title);
+	  				$scope.history = VideosService.archiveVideo($scope.urls[0]);
 	  				repeatSetCurrentTime();
 	  			}
   			}
@@ -406,104 +415,117 @@ App.controller("RoomController", function($scope, Auth, $window, $log, $http, Vi
     	console.log("dans importPlaylist");
     	console.log($scope.model.playlistId);
     	if(typeof($scope.model.playlistId)!=undefined&&$scope.model.playlistId.length>0){
-    		console.log("id valide");
-    		$http.get('https://www.googleapis.com/youtube/v3/playlists', {
-		        params: {
-		          key: 'AIzaSyD0WtrkfGnp0t2j91c74nWnUo1h8QIq0Ng',
-		          part: 'snippet',
-		          id: $scope.model.playlistId
-		        }
-		      })
-		      .success( function (data) {
-		        if (data.items.length === 0) {
-		          $scope.label = 'None songs found!';
-		        }
-		        console.log(data.items[0].snippet.title);
-		        var playlistExist = false;
-				$scope.playlists.some(function name(element, index, array){
-					if(element.name==data.items[0].snippet.title){
-						playlistExist = true;
-						return true;
-					}
-				});
-				if(!playlistExist){
-					$http({
-					  method: 'POST',
-					  url: '/api/playlists',
-					  params: {
-					  	'steamid':$scope.user.id,
-					  	'name': data.items[0].snippet.title,
-					  	'items': []
-					  }
-					}).then(function successCallback(response) {
-						if(response.data.length==1){
-							$scope.playlists.push(response.data[0]);
+    		if($scope.model.playlistId.indexOf("youtube")<0&&$scope.model.playlistId.indexOf("&")<0&&$scope.model.playlistId.indexOf("=")<0){
+    			console.log("id valide");
+	    		$http.get('https://www.googleapis.com/youtube/v3/playlists', {
+			        params: {
+			          key: 'AIzaSyD0WtrkfGnp0t2j91c74nWnUo1h8QIq0Ng',
+			          part: 'snippet',
+			          id: $scope.model.playlistId
+			        }
+			      })
+			      .success( function (data) {
+			        if (data.items.length === 0) {
+			          $scope.label = 'None songs found!';
+			        }
+			        if(data.items.length==0){
+			        	$scope.errorImportPlaylist = "Playlist ID is not correct...";
+			        	spinner.stop();
+			        }
+			        else{
+			        	console.log(data.items[0].snippet.title);
+				        var playlistExist = false;
+						$scope.playlists.some(function name(element, index, array){
+							if(element.name==data.items[0].snippet.title){
+								playlistExist = true;
+								return true;
+							}
+						});
+						if(!playlistExist){
+							$http({
+							  method: 'POST',
+							  url: '/api/playlists',
+							  params: {
+							  	'steamid':$scope.user.id,
+							  	'name': data.items[0].snippet.title,
+							  	'items': []
+							  }
+							}).then(function successCallback(response) {
+								if(response.data.length==1){
+									$scope.playlists.push(response.data[0]);
+								}
+								$http.get('https://www.googleapis.com/youtube/v3/playlistItems', {
+							        params: {
+							          key: 'AIzaSyD0WtrkfGnp0t2j91c74nWnUo1h8QIq0Ng',
+							          part: 'snippet',
+							          'maxResults': 50,
+							          playlistId: $scope.model.playlistId
+							        }
+							      })
+							      .success( function (data) {
+							        if (data.items.length === 0) {
+							          $scope.label = 'None songs found!';
+							        }
+							        console.log(data);
+							        data.items.forEach(function name(element, index, array){
+							        	console.log(element.snippet);
+							        	$http({
+										  method: 'POST',
+										  url: '/api/songs',
+										  params: {
+										  	'playlistid':$scope.playlists[$scope.playlists.length-1]._id,
+										  	'title': element.snippet.title,
+										  	'url': element.snippet.resourceId.videoId,
+										  	'thumbnail': element.snippet.thumbnails.default.url
+										  }
+										}).then(function successCallback(response) {
+											console.log("Response POST /api/songs");
+											console.log(response);
+											// this callback will be called asynchronously
+										    // when the response is available
+										  }, function errorCallback(response) {
+										  	console.log(response);
+										    // called asynchronously if an error occurs
+										    // or server returns response with an error status.
+										  });
+										spinner.stop();
+							        });
+							      })
+							      .error( function () {
+							        $log.info('error');
+							        spinner.stop();
+	    							$scope.errorImportPlaylist = "error";
+							      })
+							      .finally( function () {
+							        
+							      });
+								// this callback will be called asynchronously
+							    // when the response is available
+							  }, function errorCallback(response) {
+							  	console.log(response);
+							  	spinner.stop();
+	    						$scope.errorImportPlaylist = "error";
+							    // called asynchronously if an error occurs
+							    // or server returns response with an error status.
+							  });
 						}
-						$http.get('https://www.googleapis.com/youtube/v3/playlistItems', {
-					        params: {
-					          key: 'AIzaSyD0WtrkfGnp0t2j91c74nWnUo1h8QIq0Ng',
-					          part: 'snippet',
-					          playlistId: $scope.model.playlistId
-					        }
-					      })
-					      .success( function (data) {
-					        if (data.items.length === 0) {
-					          $scope.label = 'None songs found!';
-					        }
-					        console.log(data);
-					        data.items.forEach(function name(element, index, array){
-					        	console.log(element.snippet);
-					        	$http({
-								  method: 'POST',
-								  url: '/api/songs',
-								  params: {
-								  	'playlistid':$scope.playlists[$scope.playlists.length-1]._id,
-								  	'title': element.snippet.title,
-								  	'url': element.snippet.resourceId.videoId,
-								  	'maxResults': 50,
-								  	'thumbnail': element.snippet.thumbnails.default.url
-								  }
-								}).then(function successCallback(response) {
-									console.log("Response POST /api/songs");
-									console.log(response);
-									// this callback will be called asynchronously
-								    // when the response is available
-								  }, function errorCallback(response) {
-								  	console.log(response);
-								    // called asynchronously if an error occurs
-								    // or server returns response with an error status.
-								  });
-								spinner.stop();
-					        });
-					      })
-					      .error( function () {
-					        $log.info('error');
-					      })
-					      .finally( function () {
-					        
-					      });
-						// this callback will be called asynchronously
-					    // when the response is available
-					  }, function errorCallback(response) {
-					  	console.log(response);
-					    // called asynchronously if an error occurs
-					    // or server returns response with an error status.
-					  });
-				}
-				else{
-					spinner.stop();
-					$scope.errorImportPlaylist = "This name is already used...";
-				}
-		        
-		      })
-		      .error( function () {
-		        $log.info('error');
-		      })
-		      .finally( function () {
-		        
-		      });
-
-    		
+						else{
+							spinner.stop();
+							$scope.errorImportPlaylist = "This name is already used...";
+						}
+			        }
+			      })
+			      .error( function () {
+			        $log.info('error');
+			      })
+			      .finally( function () {
+			        
+			      });
+    		}
+    		else{
+    			spinner.stop();
+    			$scope.errorImportPlaylist = "Playlist id is not correct !";
+    		}
     	}
     }
 

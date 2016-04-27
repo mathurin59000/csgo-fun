@@ -41,6 +41,48 @@
 	  </div>
 	</div>
 
+	<!-- Modal History-->
+	<div class="modal fade" id="modalHistory" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document" style="width: 80%;margin-left: 10%;margin-right: 10%;">
+	    <div class="modal-content">
+	      <div class="modal-body">
+	      	<div class="row">
+		        <div class="box">
+		            <div class="box-header">
+		              <h3 class="box-title">History ({{history.length}})</h3>
+		              <div class="box-tools">
+		                <div class="input-group" style="width: 150px;">
+		                  <input type="text" name="table_search" class="form-control input-sm pull-right" placeholder="Search">
+		                  <div class="input-group-btn">
+		                    <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
+		                  </div>
+		                </div>
+		              </div>
+		            </div><!-- /.box-header -->
+		            <div class="box-body table-responsive no-padding">
+		              <table class="table table-hover">
+		                <tbody><tr>
+		                  <th>Position</th>
+		                  <th>Name</th>
+		                  <th>Tools</th>
+		                </tr>
+		                <tr ng-repeat="(index, item) in history">
+		                  <td>{{index+1}}</td>
+		                  <td><img src="{{item.thumbnail}}" alt="user image" class="online" width="45px" height="30px">&nbsp;{{item.title}}</td>
+		                  <td><button type="button" class="btn btn-success btn-sm" ng-click="sendUrlPlaylist(item)" data-dismiss="modal"><i class="fa fa-play"></i></button><!--&nbsp;<button type="button" class="btn btn-danger btn-sm" ng-click="removeUrlPlaylist(item)" data-dismiss="modal"><i class="fa fa-trash"></i></button>--></td>
+		                </tr>
+		              </tbody></table>
+		            </div><!-- /.box-body -->
+		         </div>
+	         </div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
 	<!-- Modal Playlist-->
 	<div class="modal fade" id="myModalPlaylist" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	  <div class="modal-dialog" role="document" style="width: 80%;margin-left: 10%;margin-right: 10%;">
@@ -221,6 +263,7 @@
             <li ng-repeat="playlist in playlists" ng-click="addToPlaylist(playlist)"><a>{{playlist.name}}</a></li>
           </ul>
         </div>
+        <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#modalHistory">History</button>
         <h4 ng-show="urls.length>0">Title : {{urls[0].title}}</h4>
         <p><i class="fa fa-youtube-play"></i> Player status is: {{playerStatus}}</p>
 	</section><!-- /.Left col -->
